@@ -1,120 +1,109 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Proget\PHPStan\Yii2;
 
+use Closure;
+use InvalidArgumentException;
 use PhpParser\Node;
-use yii\base\BaseObject;
+use PhpParser\Node\Scalar\String_;
+use ReflectionException;
+use ReflectionFunction;
+use ReflectionNamedType;
+use RuntimeException;
 
-final class ServiceMap
-{
-    /**
-     * @var string[]
-     */
-    private $services = [];
+final class ServiceMap {
 
     /**
      * @var array<string, string>
      */
-    private $components = [];
+    private array $services = [];
 
-    public function __construct(string $configPath)
-    {
+    /**
+     * @var array<string, string>
+     */
+    private array $components = [];
+
+    /**
+     * @throws RuntimeException|ReflectionException
+     */
+    public function __construct(string $configPath) {
         if (!file_exists($configPath)) {
-            throw new \InvalidArgumentException(sprintf('Provided config path %s must exist', $configPath));
+            throw new InvalidArgumentException(sprintf('Provided config path %s must exist', $configPath));
         }
 
-        \defined('YII_DEBUG') or \define('YII_DEBUG', true);
-        \defined('YII_ENV_DEV') or \define('YII_ENV_DEV', false);
-        \defined('YII_ENV_PROD') or \define('YII_ENV_PROD', false);
-        \defined('YII_ENV_TEST') or \define('YII_ENV_TEST', true);
+        defined('YII_DEBUG') || define('YII_DEBUG', true);
+        defined('YII_ENV_DEV') || define('YII_ENV_DEV', false);
+        defined('YII_ENV_PROD') || define('YII_ENV_PROD', false);
+        defined('YII_ENV_TEST') || define('YII_ENV_TEST', true);
 
         $config = require $configPath;
-        foreach ($config['container']['singletons'] ?? [] as $id => $service) {
-            $this->addServiceDefinition($id, $service);
+        foreach ($config['container']['singletons'] ?? [] as $id => $definition) {
+            $this->services[$id] = $this->guessDefinition($id, $definition);
         }
 
-        foreach ($config['container']['definitions'] ?? [] as $id => $service) {
-            $this->addServiceDefinition($id, $service);
+        foreach ($config['container']['definitions'] ?? [] as $id => $definition) {
+            $this->services[$id] = $this->guessDefinition($id, $definition);
         }
 
-        foreach ($config['components'] ?? [] as $id => $component) {
-            if (\is_object($component)) {
-                $this->components[$id] = \get_class($component);
-                continue;
-            }
-
-            if (!\is_array($component)) {
-                throw new \RuntimeException(\sprintf('Invalid value for component with id %s. Expected object or array.', $id));
-            }
-
-            if (null !== $class = $component['class'] ?? null) {
-                $this->components[$id] = $class;
-            }
+        foreach ($config['components'] ?? [] as $id => $definition) {
+            $this->components[$id] = $this->guessDefinition($id, $definition);
         }
     }
 
-    public function getServiceClassFromNode(Node $node): ?string
-    {
-        if ($node instanceof Node\Scalar\String_ && isset($this->services[$node->value])) {
+    public function getServiceClassFromNode(Node $node): ?string {
+        if ($node instanceof String_ && isset($this->services[$node->value])) {
             return $this->services[$node->value];
         }
 
         return null;
     }
 
-    public function getComponentClassById(string $id): ?string
-    {
+    public function getComponentClassById(string $id): ?string {
         return $this->components[$id] ?? null;
     }
 
     /**
-     * @param string|\Closure|array<mixed> $service
-     *
-     * @throws \RuntimeException|\ReflectionException
+     * @param object|string|Closure|array $definition
+     * @throws RuntimeException|ReflectionException
      */
-    private function addServiceDefinition(string $id, $service): void
-    {
-        $this->services[$id] = $this->guessServiceDefinition($id, $service);
-    }
-
-    /**
-     * @param string|\Closure|array<mixed> $service
-     *
-     * @throws \RuntimeException|\ReflectionException
-     */
-    private function guessServiceDefinition(string $id, $service): string
-    {
-        if (\is_string($service) && \class_exists($service)) {
-            return $service;
+    private function guessDefinition(string $id, $definition): string {
+        if (is_string($definition) && class_exists($definition)) {
+            return $definition;
         }
 
-        if ($service instanceof \Closure || \is_string($service)) {
-            $returnType = (new \ReflectionFunction($service))->getReturnType();
-            if (!$returnType instanceof \ReflectionNamedType) {
-                throw new \RuntimeException(\sprintf('Please provide return type for %s service closure', $id));
+        if ($definition instanceof Closure) {
+            $returnType = (new ReflectionFunction($definition))->getReturnType();
+            if ($returnType instanceof ReflectionNamedType) {
+                return $returnType->getName();
             }
 
-            return $returnType->getName();
+            if (class_exists($id)) {
+                return $id;
+            }
+
+            throw new RuntimeException(sprintf('Please provide return type for %s service closure', $id));
         }
 
-        if (!\is_array($service)) {
-            throw new \RuntimeException(\sprintf('Unsupported service definition for %s', $id));
+        if (is_object($definition)) {
+            return get_class($definition);
         }
 
-        if (isset($service['class'])) {
-            return $service['class'];
+        if (is_array($definition)) {
+            if (isset($definition['class'])) {
+                return $definition['class'];
+            }
+
+            if (isset($definition['__class'])) {
+                return $definition['__class'];
+            }
         }
 
-        if (isset($service[0]['class'])) {
-            return $service[0]['class'];
-        }
-
-        if (\is_subclass_of($id, BaseObject::class)) {
+        if (class_exists($id)) {
             return $id;
         }
 
-        throw new \RuntimeException(\sprintf('Cannot guess service definition for %s', $id));
+        throw new RuntimeException(sprintf('Unsupported definition for %s', $id));
     }
+
 }

@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'container' => ['singletons' => [
-        'unsupported-array' => [],
-    ]]
+    'container' => [
+        'singletons' => [
+            'unsupported-array' => [],
+        ],
+    ],
 ];

@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'container' => ['singletons' => [
-        'no-return-type' => function () {
-            return new \ArrayObject();
-        }
-    ]]
+    'container' => [
+        'singletons' => [
+            'no-return-type' => fn() => new \ArrayObject(),
+        ],
+    ],
 ];

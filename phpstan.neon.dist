@@ -1,0 +1,17 @@
+includes:
+  - vendor/phpstan/phpstan-phpunit/extension.neon
+  - vendor/phpstan/phpstan-phpunit/rules.neon
+  - extension.neon
+
+parameters:
+  scanFiles:
+    - vendor/yiisoft/yii2/Yii.php
+  paths:
+    - src
+    - tests
+  level: 5
+  yii2:
+    config_path: tests/assets/yii-config-valid.php
+  ignoreErrors:
+    - '#Calling PHPStan\\Reflection\\Annotations\\AnnotationsPropertiesClassReflectionExtension\:\:(has|get)Property\(\) is not covered.+#'
+    - '#Creating new PHPStan\\Reflection\\Dummy\\DummyPropertyReflection is not covered.+#'
