@@ -12,6 +12,9 @@ use ReflectionFunction;
 use ReflectionNamedType;
 use RuntimeException;
 
+/**
+ * @phpstan-type Yii2Definition object|string|Closure|array{class?: string, __class?: string}
+ */
 final class ServiceMap {
 
     /**
@@ -37,6 +40,15 @@ final class ServiceMap {
         defined('YII_ENV_PROD') || define('YII_ENV_PROD', false);
         defined('YII_ENV_TEST') || define('YII_ENV_TEST', true);
 
+        /**
+         * @var array{
+         *     container?: array{
+         *         singletons?: array<string, Yii2Definition>,
+         *         definitions?: array<string, Yii2Definition>,
+         *     },
+         *     components?: array<string, Yii2Definition>,
+         * } $config
+         */
         $config = require $configPath;
         foreach ($config['container']['singletons'] ?? [] as $id => $definition) {
             $this->services[$id] = $this->guessDefinition($id, $definition);
@@ -64,7 +76,7 @@ final class ServiceMap {
     }
 
     /**
-     * @param object|string|Closure|array{class?: string, __class?: string} $definition
+     * @param Yii2Definition $definition
      * @throws RuntimeException|ReflectionException
      */
     private function guessDefinition(string $id, $definition): string {
