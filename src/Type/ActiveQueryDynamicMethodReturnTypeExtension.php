@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Proget\PHPStan\Yii2\Type;
@@ -22,27 +21,24 @@ use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use yii\db\ActiveQuery;
 
-final class ActiveQueryDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
-{
-    public function getClass(): string
-    {
+final class ActiveQueryDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension {
+
+    public function getClass(): string {
         return ActiveQuery::class;
     }
 
-    public function isMethodSupported(MethodReflection $methodReflection): bool
-    {
+    public function isMethodSupported(MethodReflection $methodReflection): bool {
         if (ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType() instanceof ThisType) {
             return true;
         }
 
-        return \in_array($methodReflection->getName(), ['one', 'all'], true);
+        return in_array($methodReflection->getName(), ['one', 'all'], true);
     }
 
-    public function getTypeFromMethodCall(MethodReflection $methodReflection, MethodCall $methodCall, Scope $scope): Type
-    {
+    public function getTypeFromMethodCall(MethodReflection $methodReflection, MethodCall $methodCall, Scope $scope): Type {
         $calledOnType = $scope->getType($methodCall->var);
         if (!$calledOnType instanceof ActiveQueryObjectType) {
-            throw new ShouldNotHappenException(sprintf('Unexpected type %s during method call %s at line %d', \get_class($calledOnType), $methodReflection->getName(), $methodCall->getLine()));
+            throw new ShouldNotHappenException(sprintf('Unexpected type %s during method call %s at line %d', get_class($calledOnType), $methodReflection->getName(), $methodCall->getLine()));
         }
 
         $methodName = $methodReflection->getName();
@@ -55,20 +51,21 @@ final class ActiveQueryDynamicMethodReturnTypeExtension implements DynamicMethod
             return new ActiveQueryObjectType($calledOnType->getModelClass(), $argType->getValue());
         }
 
-        if (!\in_array($methodName, ['one', 'all'], true)) {
+        if (!in_array($methodName, ['one', 'all'], true)) {
             return new ActiveQueryObjectType($calledOnType->getModelClass(), $calledOnType->isAsArray());
         }
 
         if ($methodName === 'one') {
             return TypeCombinator::union(
                 new NullType(),
-                $calledOnType->isAsArray() ? new ArrayType(new StringType(), new MixedType()) : new ActiveRecordObjectType($calledOnType->getModelClass())
+                $calledOnType->isAsArray() ? new ArrayType(new StringType(), new MixedType()) : new ActiveRecordObjectType($calledOnType->getModelClass()),
             );
         }
 
         return new ArrayType(
             new IntegerType(),
-            $calledOnType->isAsArray() ? new ArrayType(new StringType(), new MixedType()) : new ActiveRecordObjectType($calledOnType->getModelClass())
+            $calledOnType->isAsArray() ? new ArrayType(new StringType(), new MixedType()) : new ActiveRecordObjectType($calledOnType->getModelClass()),
         );
     }
+
 }

@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Proget\PHPStan\Yii2\Type;
@@ -8,38 +7,29 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\VerbosityLevel;
 use yii\db\ActiveQuery;
 
-class ActiveQueryObjectType extends ObjectType
-{
-    /**
-     * @var string
-     */
-    private $modelClass;
+final class ActiveQueryObjectType extends ObjectType {
 
-    /**
-     * @var bool
-     */
-    private $asArray;
+    private string $modelClass;
 
-    public function __construct(string $modelClass, bool $asArray)
-    {
+    private bool $asArray;
+
+    public function __construct(string $modelClass, bool $asArray) {
         parent::__construct(ActiveQuery::class);
 
         $this->modelClass = $modelClass;
         $this->asArray = $asArray;
     }
 
-    public function getModelClass(): string
-    {
+    public function getModelClass(): string {
         return $this->modelClass;
     }
 
-    public function isAsArray(): bool
-    {
+    public function isAsArray(): bool {
         return $this->asArray;
     }
 
-    public function describe(VerbosityLevel $level): string
-    {
+    public function describe(VerbosityLevel $level): string {
         return sprintf('%s<%s>', parent::describe($level), $this->modelClass);
     }
+
 }

@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Proget\PHPStan\Yii2\Type;
@@ -19,15 +18,13 @@ use PHPStan\Type\UnionType;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
-final class ActiveRecordDynamicStaticMethodReturnTypeExtension implements DynamicStaticMethodReturnTypeExtension
-{
-    public function getClass(): string
-    {
+final class ActiveRecordDynamicStaticMethodReturnTypeExtension implements DynamicStaticMethodReturnTypeExtension {
+
+    public function getClass(): string {
         return ActiveRecord::class;
     }
 
-    public function isStaticMethodSupported(MethodReflection $methodReflection): bool
-    {
+    public function isStaticMethodSupported(MethodReflection $methodReflection): bool {
         $returnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
         if ($returnType instanceof ThisType) {
             return true;
@@ -36,16 +33,15 @@ final class ActiveRecordDynamicStaticMethodReturnTypeExtension implements Dynami
         if ($returnType instanceof UnionType) {
             foreach ($returnType->getTypes() as $type) {
                 if ($type instanceof ObjectType) {
-                    return \is_a($type->getClassName(), $this->getClass(), true);
+                    return is_a($type->getClassName(), $this->getClass(), true);
                 }
             }
         }
 
-        return $returnType instanceof ObjectType && \is_a($returnType->getClassName(), ActiveQuery::class, true);
+        return $returnType instanceof ObjectType && is_a($returnType->getClassName(), ActiveQuery::class, true);
     }
 
-    public function getTypeFromStaticMethodCall(MethodReflection $methodReflection, StaticCall $methodCall, Scope $scope): Type
-    {
+    public function getTypeFromStaticMethodCall(MethodReflection $methodReflection, StaticCall $methodCall, Scope $scope): Type {
         /** @var Name $className */
         $className = $methodCall->class;
         $name = $scope->resolveName($className);
@@ -58,10 +54,11 @@ final class ActiveRecordDynamicStaticMethodReturnTypeExtension implements Dynami
         if ($returnType instanceof UnionType) {
             return TypeCombinator::union(
                 new NullType(),
-                new ActiveRecordObjectType($name)
+                new ActiveRecordObjectType($name),
             );
         }
 
         return new ActiveQueryObjectType($name, false);
     }
+
 }

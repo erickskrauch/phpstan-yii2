@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Proget\PHPStan\Yii2\Type;
@@ -17,21 +16,18 @@ use PHPStan\Type\Type;
 use PHPStan\Type\UnionType;
 use yii\web\HeaderCollection;
 
-class HeaderCollectionDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
-{
-    public function getClass(): string
-    {
+final class HeaderCollectionDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension {
+
+    public function getClass(): string {
         return HeaderCollection::class;
     }
 
-    public function isMethodSupported(MethodReflection $methodReflection): bool
-    {
+    public function isMethodSupported(MethodReflection $methodReflection): bool {
         return $methodReflection->getName() === 'get';
     }
 
-    public function getTypeFromMethodCall(MethodReflection $methodReflection, MethodCall $methodCall, Scope $scope): Type
-    {
-        if (\count($methodCall->args) < 3) {
+    public function getTypeFromMethodCall(MethodReflection $methodReflection, MethodCall $methodCall, Scope $scope): Type {
+        if (count($methodCall->args) < 3) {
             // $first === true (the default) and the get-method returns something of type string
             return new StringType();
         }
@@ -54,4 +50,5 @@ class HeaderCollectionDynamicMethodReturnTypeExtension implements DynamicMethodR
         // Unable to figure out value of third parameter $first, therefore it can be of either type
         return new UnionType([new ArrayType(new IntegerType(), new StringType()), new StringType()]);
     }
+
 }

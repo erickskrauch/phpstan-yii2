@@ -64,7 +64,7 @@ final class ServiceMap {
     }
 
     /**
-     * @param object|string|Closure|array $definition
+     * @param object|string|Closure|array{class?: string, __class?: string} $definition
      * @throws RuntimeException|ReflectionException
      */
     private function guessDefinition(string $id, $definition): string {

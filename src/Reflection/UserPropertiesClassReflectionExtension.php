@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Proget\PHPStan\Yii2\Reflection;
@@ -12,20 +11,15 @@ use PHPStan\Reflection\PropertyReflection;
 use PHPStan\Type\MixedType;
 use yii\web\User;
 
-final class UserPropertiesClassReflectionExtension implements PropertiesClassReflectionExtension
-{
-    /**
-     * @var AnnotationsPropertiesClassReflectionExtension
-     */
-    private $annotationsProperties;
+final class UserPropertiesClassReflectionExtension implements PropertiesClassReflectionExtension {
 
-    public function __construct(AnnotationsPropertiesClassReflectionExtension $annotationsProperties)
-    {
+    private AnnotationsPropertiesClassReflectionExtension $annotationsProperties;
+
+    public function __construct(AnnotationsPropertiesClassReflectionExtension $annotationsProperties) {
         $this->annotationsProperties = $annotationsProperties;
     }
 
-    public function hasProperty(ClassReflection $classReflection, string $propertyName): bool
-    {
+    public function hasProperty(ClassReflection $classReflection, string $propertyName): bool {
         if ($classReflection->getName() !== User::class) {
             return false;
         }
@@ -34,8 +28,7 @@ final class UserPropertiesClassReflectionExtension implements PropertiesClassRef
             || $this->annotationsProperties->hasProperty($classReflection, $propertyName);
     }
 
-    public function getProperty(ClassReflection $classReflection, string $propertyName): PropertyReflection
-    {
+    public function getProperty(ClassReflection $classReflection, string $propertyName): PropertyReflection {
         if ($propertyName === 'identity') {
             return new ComponentPropertyReflection(new DummyPropertyReflection(), new MixedType());
         }
@@ -46,4 +39,5 @@ final class UserPropertiesClassReflectionExtension implements PropertiesClassRef
 
         return $this->annotationsProperties->getProperty($classReflection, $propertyName);
     }
+
 }

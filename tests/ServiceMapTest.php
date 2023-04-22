@@ -9,7 +9,6 @@ use PHPUnit\Framework\TestCase;
 use Proget\PHPStan\Yii2\ServiceMap;
 use Proget\Tests\PHPStan\Yii2\Yii\MyActiveRecord;
 use RuntimeException;
-use SplFileInfo;
 use SplObjectStorage;
 use SplStack;
 
@@ -53,16 +52,16 @@ final class ServiceMapTest extends TestCase {
     public function testItLoadsServicesAndComponents(): void {
         $serviceMap = new ServiceMap(__DIR__ . '/assets/yii-config-valid.php');
 
-        self::assertSame(MyActiveRecord::class, $serviceMap->getServiceClassFromNode(new String_('singleton-string')));
-        self::assertSame(MyActiveRecord::class, $serviceMap->getServiceClassFromNode(new String_(MyActiveRecord::class)));
-        self::assertSame(SplStack::class, $serviceMap->getServiceClassFromNode(new String_('singleton-closure')));
-        self::assertSame(SplObjectStorage::class, $serviceMap->getServiceClassFromNode(new String_('singleton-service')));
+        $this->assertSame(MyActiveRecord::class, $serviceMap->getServiceClassFromNode(new String_('singleton-string')));
+        $this->assertSame(MyActiveRecord::class, $serviceMap->getServiceClassFromNode(new String_(MyActiveRecord::class)));
+        $this->assertSame(SplStack::class, $serviceMap->getServiceClassFromNode(new String_('singleton-closure')));
+        $this->assertSame(SplObjectStorage::class, $serviceMap->getServiceClassFromNode(new String_('singleton-service')));
 
-        self::assertSame(SplStack::class, $serviceMap->getServiceClassFromNode(new String_('closure')));
-        self::assertSame(SplObjectStorage::class, $serviceMap->getServiceClassFromNode(new String_('service')));
+        $this->assertSame(SplStack::class, $serviceMap->getServiceClassFromNode(new String_('closure')));
+        $this->assertSame(SplObjectStorage::class, $serviceMap->getServiceClassFromNode(new String_('service')));
 
-        self::assertSame(MyActiveRecord::class, $serviceMap->getComponentClassById('customComponent'));
-        self::assertSame(MyActiveRecord::class, $serviceMap->getComponentClassById('customInitializedComponent'));
+        $this->assertSame(MyActiveRecord::class, $serviceMap->getComponentClassById('customComponent'));
+        $this->assertSame(MyActiveRecord::class, $serviceMap->getComponentClassById('customInitializedComponent'));
     }
 
     /**

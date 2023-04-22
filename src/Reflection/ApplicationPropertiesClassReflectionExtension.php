@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Proget\PHPStan\Yii2\Reflection;
@@ -15,22 +14,13 @@ use Proget\PHPStan\Yii2\ServiceMap;
 use yii\base\Application as BaseApplication;
 use yii\web\Application as WebApplication;
 
-final class ApplicationPropertiesClassReflectionExtension implements PropertiesClassReflectionExtension
-{
-    /**
-     * @var AnnotationsPropertiesClassReflectionExtension
-     */
-    private $annotationsProperties;
+final class ApplicationPropertiesClassReflectionExtension implements PropertiesClassReflectionExtension {
 
-    /**
-     * @var ServiceMap
-     */
-    private $serviceMap;
+    private AnnotationsPropertiesClassReflectionExtension $annotationsProperties;
 
-    /**
-     * @var \PHPStan\Reflection\ReflectionProvider
-     */
-    private $reflectionProvider;
+    private ServiceMap $serviceMap;
+
+    private ReflectionProvider $reflectionProvider;
 
     public function __construct(
         AnnotationsPropertiesClassReflectionExtension $annotationsProperties,
@@ -42,8 +32,7 @@ final class ApplicationPropertiesClassReflectionExtension implements PropertiesC
         $this->reflectionProvider = $reflectionProvider;
     }
 
-    public function hasProperty(ClassReflection $classReflection, string $propertyName): bool
-    {
+    public function hasProperty(ClassReflection $classReflection, string $propertyName): bool {
         if ($classReflection->getName() !== BaseApplication::class && !$classReflection->isSubclassOf(BaseApplication::class)) {
             return false;
         }
@@ -57,8 +46,7 @@ final class ApplicationPropertiesClassReflectionExtension implements PropertiesC
             || $this->serviceMap->getComponentClassById($propertyName);
     }
 
-    public function getProperty(ClassReflection $classReflection, string $propertyName): PropertyReflection
-    {
+    public function getProperty(ClassReflection $classReflection, string $propertyName): PropertyReflection {
         if ($classReflection->getName() !== WebApplication::class) {
             $classReflection = $this->reflectionProvider->getClass(WebApplication::class);
         }
@@ -73,4 +61,5 @@ final class ApplicationPropertiesClassReflectionExtension implements PropertiesC
 
         return $this->annotationsProperties->getProperty($classReflection, $propertyName);
     }
+
 }
