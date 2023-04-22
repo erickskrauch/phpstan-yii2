@@ -9,6 +9,7 @@ return [
             'class' => MyActiveRecord::class,
         ],
         'customInitializedComponent' => new MyActiveRecord(),
+        'cache' => yii\caching\CacheInterface::class,
     ],
     'container' => [
         'singletons' => [

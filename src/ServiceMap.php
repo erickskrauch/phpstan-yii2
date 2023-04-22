@@ -80,7 +80,7 @@ final class ServiceMap {
      * @throws RuntimeException|ReflectionException
      */
     private function guessDefinition(string $id, $definition): string {
-        if (is_string($definition) && class_exists($definition)) {
+        if (is_string($definition) && (class_exists($definition) || interface_exists($definition))) {
             return $definition;
         }
 
@@ -90,7 +90,7 @@ final class ServiceMap {
                 return $returnType->getName();
             }
 
-            if (class_exists($id)) {
+            if (class_exists($id) || interface_exists($id)) {
                 return $id;
             }
 

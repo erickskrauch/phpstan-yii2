@@ -11,6 +11,7 @@ use Proget\Tests\PHPStan\Yii2\Yii\MyActiveRecord;
 use RuntimeException;
 use SplObjectStorage;
 use SplStack;
+use yii\caching\CacheInterface;
 
 final class ServiceMapTest extends TestCase {
 
@@ -62,6 +63,7 @@ final class ServiceMapTest extends TestCase {
 
         $this->assertSame(MyActiveRecord::class, $serviceMap->getComponentClassById('customComponent'));
         $this->assertSame(MyActiveRecord::class, $serviceMap->getComponentClassById('customInitializedComponent'));
+        $this->assertSame(CacheInterface::class, $serviceMap->getComponentClassById('cache'));
     }
 
     /**
