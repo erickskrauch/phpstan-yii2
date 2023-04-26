@@ -1,0 +1,5 @@
+includes:
+  - %rootDir%/../../../extension.neon
+parameters:
+  yii2:
+    config_path: %rootDir%/../../../tests/Type/container-config.php

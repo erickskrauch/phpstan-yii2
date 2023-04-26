@@ -1,32 +1,36 @@
 <?php
 declare(strict_types=1);
 
-use Proget\Tests\PHPStan\Yii2\Yii\MyActiveRecord;
+use Proget\Tests\PHPStan\Yii2\Yii\FirstActiveRecord;
 
 return [
     'components' => [
         'customComponent' => [
-            'class' => MyActiveRecord::class,
+            'class' => FirstActiveRecord::class,
         ],
-        'customInitializedComponent' => new MyActiveRecord(),
-        'cache' => yii\caching\CacheInterface::class,
+        'customInitializedComponent' => new FirstActiveRecord(),
+        'componentToContainer' => yii\caching\CacheInterface::class,
     ],
     'container' => [
         'singletons' => [
-            'singleton-string' => MyActiveRecord::class,
-            'singleton-closure' => function(): SplStack {
-                return new SplStack();
+            'singleton-string' => FirstActiveRecord::class,
+            Stringable::class => fn() => new class implements Stringable {
+                public function __toString(): string {
+                    return '';
+                }
             },
-            'singleton-service' => ['class' => SplObjectStorage::class],
         ],
         'definitions' => [
             'closure' => function(): SplStack {
                 return new SplStack();
             },
-            'service' => ['class' => SplObjectStorage::class],
-            MyActiveRecord::class => [
+            'service' => [
+                'class' => SplObjectStorage::class,
+            ],
+            FirstActiveRecord::class => [
                 'flag' => 'foo',
             ],
+            Throwable::class => Exception::class,
         ],
     ],
 ];

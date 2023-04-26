@@ -51,7 +51,8 @@ final class ApplicationPropertiesClassReflectionExtension implements PropertiesC
             $classReflection = $this->reflectionProvider->getClass(WebApplication::class);
         }
 
-        if (null !== $componentClass = $this->serviceMap->getComponentClassById($propertyName)) {
+        $componentClass = $this->serviceMap->getComponentClassById($propertyName);
+        if ($componentClass !== null) {
             return new ComponentPropertyReflection(new DummyPropertyReflection(), new ObjectType($componentClass));
         }
 

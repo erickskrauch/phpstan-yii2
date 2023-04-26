@@ -3,17 +3,39 @@ declare(strict_types=1);
 
 namespace Proget\Tests\PHPStan\Yii2;
 
+use Exception;
 use InvalidArgumentException;
 use PhpParser\Node\Scalar\String_;
 use PHPUnit\Framework\TestCase;
 use Proget\PHPStan\Yii2\ServiceMap;
-use Proget\Tests\PHPStan\Yii2\Yii\MyActiveRecord;
+use Proget\Tests\PHPStan\Yii2\Yii\FirstActiveRecord;
 use RuntimeException;
 use SplObjectStorage;
 use SplStack;
+use Stringable;
+use Throwable;
 use yii\caching\CacheInterface;
 
 final class ServiceMapTest extends TestCase {
+
+    public function testItLoadsServicesAndComponents(): void {
+        $serviceMap = new ServiceMap(__DIR__ . '/assets/yii-config-valid.php');
+
+        // Singletons
+        $this->assertSame(FirstActiveRecord::class, $serviceMap->getServiceClassFromNode(new String_('singleton-string')));
+        $this->assertSame(FirstActiveRecord::class, $serviceMap->getServiceClassFromNode(new String_(FirstActiveRecord::class)));
+        $this->assertSame(Exception::class, $serviceMap->getServiceClassFromNode(new String_(Throwable::class)));
+        $this->assertSame(Stringable::class, $serviceMap->getServiceClassFromNode(new String_(Stringable::class)));
+
+        // Definitions
+        $this->assertSame(SplStack::class, $serviceMap->getServiceClassFromNode(new String_('closure')));
+        $this->assertSame(SplObjectStorage::class, $serviceMap->getServiceClassFromNode(new String_('service')));
+
+        // Components
+        $this->assertSame(FirstActiveRecord::class, $serviceMap->getComponentClassById('customComponent'));
+        $this->assertSame(FirstActiveRecord::class, $serviceMap->getComponentClassById('customInitializedComponent'));
+        $this->assertSame(CacheInterface::class, $serviceMap->getComponentClassById('componentToContainer'));
+    }
 
     public function testThrowExceptionWhenConfigurationFileDoesNotExist(): void {
         $this->expectException(InvalidArgumentException::class);
@@ -48,22 +70,6 @@ final class ServiceMapTest extends TestCase {
         $this->expectExceptionMessage('Unsupported definition for customComponent');
 
         new ServiceMap(__DIR__ . '/assets/yii-config-invalid-component.php');
-    }
-
-    public function testItLoadsServicesAndComponents(): void {
-        $serviceMap = new ServiceMap(__DIR__ . '/assets/yii-config-valid.php');
-
-        $this->assertSame(MyActiveRecord::class, $serviceMap->getServiceClassFromNode(new String_('singleton-string')));
-        $this->assertSame(MyActiveRecord::class, $serviceMap->getServiceClassFromNode(new String_(MyActiveRecord::class)));
-        $this->assertSame(SplStack::class, $serviceMap->getServiceClassFromNode(new String_('singleton-closure')));
-        $this->assertSame(SplObjectStorage::class, $serviceMap->getServiceClassFromNode(new String_('singleton-service')));
-
-        $this->assertSame(SplStack::class, $serviceMap->getServiceClassFromNode(new String_('closure')));
-        $this->assertSame(SplObjectStorage::class, $serviceMap->getServiceClassFromNode(new String_('service')));
-
-        $this->assertSame(MyActiveRecord::class, $serviceMap->getComponentClassById('customComponent'));
-        $this->assertSame(MyActiveRecord::class, $serviceMap->getComponentClassById('customInitializedComponent'));
-        $this->assertSame(CacheInterface::class, $serviceMap->getComponentClassById('cache'));
     }
 
     /**

@@ -19,6 +19,7 @@ final class ComponentPropertyReflection implements PropertyReflection {
         $this->type = $type;
     }
 
+    // TODO: seems to be unused
     public function getType(): Type {
         return $this->type;
     }
