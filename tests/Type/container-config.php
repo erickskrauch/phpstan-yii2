@@ -10,8 +10,10 @@ return [
     ],
     'container' => [
         'singletons' => [
+            DateTimeInterface::class => new DateTime(),
         ],
         'definitions' => [
+            Iterator::class => fn() => new ArrayIterator(),
         ],
     ],
 ];

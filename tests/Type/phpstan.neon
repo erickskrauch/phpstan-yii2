@@ -3,3 +3,5 @@ includes:
 parameters:
   yii2:
     config_path: %rootDir%/../../../tests/Type/container-config.php
+  bootstrapFiles:
+    - %rootDir%/../../yiisoft/yii2/Yii.php

@@ -6,6 +6,8 @@ namespace Proget\PHPStan\Yii2;
 use Closure;
 use InvalidArgumentException;
 use PhpParser\Node;
+use PhpParser\Node\Expr\ClassConstFetch;
+use PhpParser\Node\Name;
 use PhpParser\Node\Scalar\String_;
 use ReflectionException;
 use ReflectionFunction;
@@ -64,11 +66,15 @@ final class ServiceMap {
     }
 
     public function getServiceClassFromNode(Node $node): ?string {
-        if ($node instanceof String_ && isset($this->services[$node->value])) {
-            return $this->services[$node->value];
+        if ($node instanceof String_) {
+            $service = $node->value;
+        } elseif ($node instanceof ClassConstFetch && $node->class instanceof Name) {
+            $service = $node->class->getFirst();
+        } else {
+            return null;
         }
 
-        return null;
+        return $this->services[$service] ?? null;
     }
 
     public function getComponentClassById(string $id): ?string {
