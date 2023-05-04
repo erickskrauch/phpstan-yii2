@@ -13,6 +13,9 @@ use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Type;
 use yii\db\ActiveRecord;
 
+/**
+ * TODO: rework
+ */
 final class ActiveRecordDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension {
 
     public function getClass(): string {

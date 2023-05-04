@@ -8,7 +8,7 @@ use InvalidArgumentException;
 use PhpParser\Node\Scalar\String_;
 use PHPUnit\Framework\TestCase;
 use Proget\PHPStan\Yii2\ServiceMap;
-use Proget\Tests\PHPStan\Yii2\Yii\FirstActiveRecord;
+use Proget\Tests\PHPStan\Yii2\Yii\Article;
 use RuntimeException;
 use SplObjectStorage;
 use SplStack;
@@ -22,8 +22,8 @@ final class ServiceMapTest extends TestCase {
         $serviceMap = new ServiceMap(__DIR__ . '/assets/yii-config-valid.php');
 
         // Singletons
-        $this->assertSame(FirstActiveRecord::class, $serviceMap->getServiceClassFromNode(new String_('singleton-string')));
-        $this->assertSame(FirstActiveRecord::class, $serviceMap->getServiceClassFromNode(new String_(FirstActiveRecord::class)));
+        $this->assertSame(Article::class, $serviceMap->getServiceClassFromNode(new String_('singleton-string')));
+        $this->assertSame(Article::class, $serviceMap->getServiceClassFromNode(new String_(Article::class)));
         $this->assertSame(Exception::class, $serviceMap->getServiceClassFromNode(new String_(Throwable::class)));
         $this->assertSame(Stringable::class, $serviceMap->getServiceClassFromNode(new String_(Stringable::class)));
 
@@ -32,8 +32,8 @@ final class ServiceMapTest extends TestCase {
         $this->assertSame(SplObjectStorage::class, $serviceMap->getServiceClassFromNode(new String_('service')));
 
         // Components
-        $this->assertSame(FirstActiveRecord::class, $serviceMap->getComponentClassById('customComponent'));
-        $this->assertSame(FirstActiveRecord::class, $serviceMap->getComponentClassById('customInitializedComponent'));
+        $this->assertSame(Article::class, $serviceMap->getComponentClassById('customComponent'));
+        $this->assertSame(Article::class, $serviceMap->getComponentClassById('customInitializedComponent'));
         $this->assertSame(CacheInterface::class, $serviceMap->getComponentClassById('componentToContainer'));
     }
 

@@ -1,19 +1,19 @@
 <?php
 declare(strict_types=1);
 
-use Proget\Tests\PHPStan\Yii2\Yii\FirstActiveRecord;
+use Proget\Tests\PHPStan\Yii2\Yii\Article;
 
 return [
     'components' => [
         'customComponent' => [
-            'class' => FirstActiveRecord::class,
+            'class' => Article::class,
         ],
-        'customInitializedComponent' => new FirstActiveRecord(),
+        'customInitializedComponent' => new Article(),
         'componentToContainer' => yii\caching\CacheInterface::class,
     ],
     'container' => [
         'singletons' => [
-            'singleton-string' => FirstActiveRecord::class,
+            'singleton-string' => Article::class,
             Stringable::class => fn() => new class implements Stringable {
                 public function __toString(): string {
                     return '';
@@ -27,7 +27,7 @@ return [
             'service' => [
                 'class' => SplObjectStorage::class,
             ],
-            FirstActiveRecord::class => [
+            Article::class => [
                 'flag' => 'foo',
             ],
             Throwable::class => Exception::class,

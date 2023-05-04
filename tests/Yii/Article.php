@@ -9,14 +9,14 @@ use yii\db\ActiveRecord;
 /**
  * @property boolean $flag
  */
-final class FirstActiveRecord extends ActiveRecord {
+final class Article extends ActiveRecord {
 
     public function getSelf(): ActiveQuery {
         return $this->hasOne(self::class, ['id' => 'id']);
     }
 
-    public function getSecond(): ActiveQuery {
-        return $this->hasOne(SecondActiveRecord::class, ['id' => 'id']);
+    public function getComments(): ActiveQuery {
+        return $this->hasMany(Comment::class, ['id' => 'id']);
     }
 
 }

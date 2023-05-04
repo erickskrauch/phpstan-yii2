@@ -15,20 +15,22 @@ use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\NullType;
+use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
-use PHPStan\Type\ThisType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
-use yii\db\ActiveQuery;
+use yii\db\ActiveQueryInterface;
 
-final class ActiveQueryDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension {
+final class ActiveQueryBuilderReturnTypeExtension implements DynamicMethodReturnTypeExtension {
 
     public function getClass(): string {
-        return ActiveQuery::class;
+        return ActiveQueryInterface::class;
     }
 
     public function isMethodSupported(MethodReflection $methodReflection): bool {
-        if (ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType() instanceof ThisType) {
+        // This condition is necessary to process the query builder and not to lose the model during its work
+        $type = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
+        if ((new ObjectType(ActiveQueryInterface::class))->isSuperTypeOf($type)->yes()) {
             return true;
         }
 
@@ -48,24 +50,28 @@ final class ActiveQueryDynamicMethodReturnTypeExtension implements DynamicMethod
                 throw new ShouldNotHappenException(sprintf('Invalid argument provided to asArray method at line %d', $methodCall->getLine()));
             }
 
-            return new ActiveQueryObjectType($calledOnType->getModelClass(), $argType->getValue());
-        }
-
-        if (!in_array($methodName, ['one', 'all'], true)) {
-            return new ActiveQueryObjectType($calledOnType->getModelClass(), $calledOnType->isAsArray());
+            return new ActiveQueryObjectType($calledOnType->getModelClass(), $calledOnType->getClassName(), $argType->getValue());
         }
 
         if ($methodName === 'one') {
             return TypeCombinator::union(
                 new NullType(),
-                $calledOnType->isAsArray() ? new ArrayType(new StringType(), new MixedType()) : new ActiveRecordObjectType($calledOnType->getModelClass()),
+                $calledOnType->isAsArray()
+                    ? new ArrayType(new StringType(), new MixedType())
+                    : new ActiveRecordObjectType($calledOnType->getModelClass()),
             );
         }
 
-        return new ArrayType(
-            new IntegerType(),
-            $calledOnType->isAsArray() ? new ArrayType(new StringType(), new MixedType()) : new ActiveRecordObjectType($calledOnType->getModelClass()),
-        );
+        if ($methodName === 'all') {
+            return new ArrayType(
+                new IntegerType(),
+                $calledOnType->isAsArray()
+                    ? new ArrayType(new StringType(), new MixedType())
+                    : new ActiveRecordObjectType($calledOnType->getModelClass()),
+            );
+        }
+
+        return new ActiveQueryObjectType($calledOnType->getModelClass(), $calledOnType->getClassName(), $calledOnType->isAsArray());
     }
 
 }

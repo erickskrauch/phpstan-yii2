@@ -9,25 +9,25 @@ use yii\web\Controller;
 final class MyController extends Controller {
 
     public function actionSimpleFindOperations(): void {
-        $modelSingle = FirstActiveRecord::find()->andWhere(['foo' => 'bar'])->one();
+        $modelSingle = Article::find()->andWhere(['foo' => 'bar'])->one();
         if ($modelSingle !== null) {
             $modelSingle->flag = true;
         }
 
-        $modelMany = FirstActiveRecord::find()->andWhere(['foo' => 'bar'])->all();
+        $modelMany = Article::find()->andWhere(['foo' => 'bar'])->all();
         $modelMany[0]->flag = true;
     }
 
     public function actionRelations(): void {
-        $model1 = new FirstActiveRecord();
-        $model2 = $model1->getSecond()->one();
+        $model1 = new Article();
+        $model2 = $model1->getComments()->one();
         $model2->field = 'new value';
     }
 
     public function actionMy(): void {
         $offsetProp = 'flag';
         $flag = false;
-        $record = FirstActiveRecord::find()->where(['flag' => Yii::$app->request->post('flag', true)])->one();
+        $record = Article::find()->where(['flag' => Yii::$app->request->post('flag', true)])->one();
         if ($record) {
             $record->flag = false;
             $flag = $record[$offsetProp];
@@ -35,29 +35,29 @@ final class MyController extends Controller {
             $record->save();
         }
 
-        $record = FirstActiveRecord::findOne(['condition']);
+        $record = Article::findOne(['condition']);
         if ($record) {
             $flag = $record->flag;
             $flag = $record['flag'];
         }
 
-        $record = FirstActiveRecord::findBySql('');
+        $record = Article::findBySql('');
         if ($record = $record->one()) {
             $flag = $record->flag;
             $flag = $record['flag'];
         }
 
-        $records = FirstActiveRecord::find()->asArray()->where(['flag' => Yii::$app->request->post('flag', true)])->all();
+        $records = Article::find()->asArray()->where(['flag' => Yii::$app->request->post('flag', true)])->all();
         foreach ($records as $record) {
             $flag = $record['flag'];
         }
 
-        $records = FirstActiveRecord::findAll('condition');
+        $records = Article::findAll('condition');
         foreach ($records as $record) {
             $flag = $record->flag;
         }
 
-        $records = FirstActiveRecord::find()->asArray(false)->where(['condition'])->all();
+        $records = Article::find()->asArray(false)->where(['condition'])->all();
         foreach ($records as $record) {
             $flag = $record->flag;
             $flag = $record['flag'];
