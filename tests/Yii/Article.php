@@ -11,11 +11,10 @@ use yii\db\ActiveRecord;
  */
 final class Article extends ActiveRecord {
 
-    public function getSelf(): ActiveQuery {
-        return $this->hasOne(self::class, ['id' => 'id']);
-    }
-
-    public function getComments(): ActiveQuery {
+    /**
+     * @return CommentsQuery<Comment>
+     */
+    public function getComments(): CommentsQuery {
         return $this->hasMany(Comment::class, ['id' => 'id']);
     }
 

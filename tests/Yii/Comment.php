@@ -15,6 +15,9 @@ final class Comment extends ActiveRecord {
         return new CommentsQuery(self::class);
     }
 
+    /**
+     * @return ActiveQuery<Article>
+     */
     public function getArticle(): ActiveQuery {
         return $this->hasOne(Article::class, ['id' => 'id']);
     }
