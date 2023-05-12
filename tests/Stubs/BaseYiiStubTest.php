@@ -1,20 +1,17 @@
 <?php
 declare(strict_types=1);
 
-namespace Proget\Tests\PHPStan\Yii2\Type;
+namespace Proget\Tests\PHPStan\Yii2\Stubs;
 
 use Proget\Tests\PHPStan\Yii2\AbstractTypeInferenceTestCase;
 
-/**
- * @covers \Proget\PHPStan\Yii2\Type\ContainerDynamicMethodReturnTypeExtension
- */
-final class ContainerDynamicMethodReturnTypeExtensionTest extends AbstractTypeInferenceTestCase {
+final class BaseYiiStubTest extends AbstractTypeInferenceTestCase {
 
     /**
      * @return iterable<mixed>
      */
     public static function dataFileAsserts(): iterable {
-        yield from self::gatherAssertTypes(__DIR__ . '/data/container-dynamic-method-return-type.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/base-yii.php');
     }
 
     /**

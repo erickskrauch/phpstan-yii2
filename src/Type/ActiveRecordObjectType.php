@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace Proget\PHPStan\Yii2\Type;
 
 use ArrayAccess;
+use PHPStan\Analyser\OutOfClassScope;
+use PHPStan\ShouldNotHappenException;
 use PHPStan\TrinaryLogic;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\ErrorType;
@@ -22,6 +24,15 @@ final class ActiveRecordObjectType extends ObjectType {
         }
 
         return parent::hasOffsetValueType($offsetType);
+    }
+
+    public function getOffsetValueType(Type $offsetType): Type {
+        if (!$offsetType instanceof ConstantStringType) {
+            // TODO: write words
+            throw new ShouldNotHappenException('write words');
+        }
+
+        return $this->getProperty($offsetType->getValue(), new OutOfClassScope())->getReadableType();
     }
 
     public function setOffsetValueType(?Type $offsetType, Type $valueType, bool $unionValues = true): Type {

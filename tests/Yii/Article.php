@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace Proget\Tests\PHPStan\Yii2\Yii;
 
-use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 /**
- * @property boolean $flag
+ * @property int $id
+ * @property string $text
  */
 final class Article extends ActiveRecord {
 

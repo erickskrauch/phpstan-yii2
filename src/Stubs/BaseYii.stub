@@ -1,16 +1,17 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 
 namespace yii;
 
+class BaseYii {
 
-class BaseYii
-{
     /**
      * @template T
-     * @param  class-string<T>|array{class: class-string<T>}|callable(): T $type
+     * @param  class-string<T>|array{class: class-string<T>}|array{__class: class-string<T>}|callable(): T $type
      * @param array<mixed> $params
      *
      * @return T
      */
     public static function createObject($type, array $params = []);
+
 }

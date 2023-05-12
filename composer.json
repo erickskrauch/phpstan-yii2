@@ -36,7 +36,10 @@
     "autoload": {
         "psr-4": {
             "Proget\\PHPStan\\Yii2\\": "src/"
-        }
+        },
+        "exclude-from-classmap": [
+            "src/Stubs/*"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

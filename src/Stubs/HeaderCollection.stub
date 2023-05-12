@@ -1,0 +1,17 @@
+<?php
+declare(strict_types=1);
+
+namespace yii\web;
+
+class HeaderCollection {
+
+    /**
+     * @template T
+     * @param string $name
+     * @param T $default
+     * @param bool $first
+     * @return ($first is true ? string|T : non-empty-array<string>|T)
+     */
+    public function get($name, $default = null, $first = true);
+
+}

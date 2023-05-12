@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Proget\Tests\PHPStan\Yii2\Type;
 
+use Proget\Tests\PHPStan\Yii2\AbstractTypeInferenceTestCase;
+
 /**
  * @covers \Proget\PHPStan\Yii2\Type\ActiveQueryObjectType
  * @covers \Proget\PHPStan\Yii2\Type\ActiveRecordFindReturnTypeExtension
