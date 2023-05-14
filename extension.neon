@@ -2,6 +2,7 @@ parameters:
   yii2:
     config_path: null
   stubFiles:
+    - src/Stubs/ActiveQuery.stub
     - src/Stubs/BaseYii.stub
     - src/Stubs/HeaderCollection.stub
 

@@ -11,9 +11,6 @@ use yii\db\ActiveRecord;
  */
 final class Article extends ActiveRecord {
 
-    /**
-     * @return CommentsQuery<Comment>
-     */
     public function getComments(): CommentsQuery {
         return $this->hasMany(Comment::class, ['id' => 'id']);
     }

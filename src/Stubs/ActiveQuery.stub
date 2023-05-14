@@ -1,0 +1,17 @@
+<?php
+declare(strict_types=1);
+
+namespace yii\db;
+
+/**
+ * @template T
+ */
+class ActiveQuery {
+
+    /**
+     * @param class-string<T> $modelClass
+     * @param array<mixed> $config
+     */
+    public function __construct($modelClass, $config = []);
+
+}

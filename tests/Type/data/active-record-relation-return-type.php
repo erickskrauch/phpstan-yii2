@@ -9,4 +9,4 @@ use function PHPStan\Testing\assertType;
 
 assertType(ActiveQuery::class . '<' . Article::class . '>', Comment::instance()->hasOne(Article::class, []));
 assertType(ActiveQuery::class . '<' . Article::class . '>', Comment::instance()->getArticle());
-assertType(CommentsQuery::class . '<' . Comment::class . '>', Article::instance()->getComments());
+assertType(CommentsQuery::class, Article::instance()->getComments());

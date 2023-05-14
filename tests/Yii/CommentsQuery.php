@@ -5,6 +5,9 @@ namespace Proget\Tests\PHPStan\Yii2\Yii;
 
 use yii\db\ActiveQuery;
 
+/**
+ * @extends ActiveQuery<Comment>
+ */
 final class CommentsQuery extends ActiveQuery {
 
     public function notDeletedSelf(): self {
@@ -15,10 +18,7 @@ final class CommentsQuery extends ActiveQuery {
         return $this->andWhere(['is_deleted' => false]);
     }
 
-    /**
-     * @return $this
-     */
-    public function notDeletedThis() {
+    public function notDeletedThis(): self {
         return $this->andWhere(['is_deleted' => false]);
     }
 
