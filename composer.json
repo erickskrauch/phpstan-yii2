@@ -16,7 +16,7 @@
     "require": {
         "php": "^7.4 || ^8.0",
         "nikic/php-parser": "^4.1.0",
-        "phpstan/phpstan": "^1"
+        "phpstan/phpstan": "^1.6"
     },
     "require-dev": {
         "ely/php-code-style": "^0.5",
