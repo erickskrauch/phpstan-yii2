@@ -15,14 +15,14 @@ class ActiveQuery {
     public function __construct($modelClass, $config = []);
 
     /**
-     * @param Connection|null $db
-     * @return T|array|null
+     * @param \yii\db\Connection|null $db
+     * @return T|array<string, string>|null
      */
     public function one($db = null);
 
     /**
-     * @param Connection|null $db
-     * @return T[]|array
+     * @param \yii\db\Connection|null $db
+     * @return T[]|array<string, string>
      */
     public function all($db = null);
 
