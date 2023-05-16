@@ -10,6 +10,9 @@ return [
         ],
         'customInitializedComponent' => new Article(),
         'componentToContainer' => yii\caching\CacheInterface::class,
+        'request' => [
+            'baseUrl' => '/',
+        ],
     ],
     'container' => [
         'singletons' => [

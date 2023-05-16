@@ -19,6 +19,22 @@ use RuntimeException;
  */
 final class ServiceMap {
 
+    private const CORE_COMPONENTS = [
+        'log' => \yii\log\Dispatcher::class,
+        'view' => \yii\web\View::class,
+        'formatter' => \yii\i18n\Formatter::class,
+        'i18n' => \yii\i18n\I18N::class,
+        'urlManager' => \yii\web\UrlManager::class,
+        'assetManager' => \yii\web\AssetManager::class,
+        'security' => \yii\base\Security::class,
+        // TODO: Maybe in the future there will be a configuration which environment we want to analyze: web or console
+        'request' => \yii\web\Request::class,
+        'response' => \yii\web\Response::class,
+        'session' => \yii\web\Session::class,
+        'user' => \yii\web\User::class,
+        'errorHandler' => \yii\web\ErrorHandler::class,
+    ];
+
     /**
      * @var array<string, string>
      */
@@ -78,7 +94,7 @@ final class ServiceMap {
     }
 
     public function getComponentClassById(string $id): ?string {
-        return $this->components[$id] ?? null;
+        return $this->components[$id] ?? self::CORE_COMPONENTS[$id] ?? null;
     }
 
     /**
@@ -114,6 +130,10 @@ final class ServiceMap {
 
             if (isset($definition['__class'])) {
                 return $definition['__class'];
+            }
+
+            if (isset(self::CORE_COMPONENTS[$id])) {
+                return self::CORE_COMPONENTS[$id];
             }
         }
 

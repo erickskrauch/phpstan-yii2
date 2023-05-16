@@ -15,6 +15,8 @@ use SplStack;
 use Stringable;
 use Throwable;
 use yii\caching\CacheInterface;
+use yii\web\Request;
+use yii\web\Response;
 
 final class ServiceMapTest extends TestCase {
 
@@ -35,6 +37,8 @@ final class ServiceMapTest extends TestCase {
         $this->assertSame(Article::class, $serviceMap->getComponentClassById('customComponent'));
         $this->assertSame(Article::class, $serviceMap->getComponentClassById('customInitializedComponent'));
         $this->assertSame(CacheInterface::class, $serviceMap->getComponentClassById('componentToContainer'));
+        $this->assertSame(Request::class, $serviceMap->getComponentClassById('request'));
+        $this->assertSame(Response::class, $serviceMap->getComponentClassById('response'));
     }
 
     public function testThrowExceptionWhenConfigurationFileDoesNotExist(): void {
