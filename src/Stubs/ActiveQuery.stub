@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace yii\db;
 
 /**
- * @template T
+ * @template T of \yii\db\ActiveRecord
  */
 class ActiveQuery {
 
@@ -13,5 +13,17 @@ class ActiveQuery {
      * @param array<mixed> $config
      */
     public function __construct($modelClass, $config = []);
+
+    /**
+     * @param Connection|null $db
+     * @return T|array|null
+     */
+    public function one($db = null);
+
+    /**
+     * @param Connection|null $db
+     * @return T[]|array
+     */
+    public function all($db = null);
 
 }
