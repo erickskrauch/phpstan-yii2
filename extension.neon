@@ -3,8 +3,12 @@ parameters:
     config_path: null
   stubFiles:
     - src/Stubs/ActiveQuery.stub
+    - src/Stubs/ActiveRecord.stub
     - src/Stubs/BaseYii.stub
+    - src/Stubs/ColumnSchemaBuilder.stub
+    - src/Stubs/Connection.stub
     - src/Stubs/HeaderCollection.stub
+    - src/Stubs/Migration.stub
   dynamicConstantNames:
     - YII_ENV
     - YII_ENV_PROD
