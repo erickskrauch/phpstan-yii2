@@ -19,8 +19,8 @@
         "phpstan/phpstan": "^1.6"
     },
     "require-dev": {
-        "ely/php-code-style": "^0.5",
-        "ergebnis/composer-normalize": "^2.30",
+        "ely/php-code-style": "^1",
+        "ergebnis/composer-normalize": "^2.28",
         "friendsofphp/php-cs-fixer": "^3.13",
         "phpstan/extension-installer": "^1.1",
         "phpstan/phpstan-phpunit": "^1",
