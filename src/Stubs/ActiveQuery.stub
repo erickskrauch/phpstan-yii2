@@ -26,4 +26,10 @@ class ActiveQuery {
      */
     public function all($db = null) {}
 
+    /**
+     * @param string|callable(mixed $row): string|null $column
+     * @return $this
+     */
+    public function indexBy($column) {}
+
 }

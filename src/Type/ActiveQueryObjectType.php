@@ -13,15 +13,19 @@ final class ActiveQueryObjectType extends ObjectType {
 
     private bool $asArray;
 
+    private bool $hasIndexBy;
+
     public function __construct(
         string $modelClass,
         string $className = ActiveQueryInterface::class,
-        bool $asArray = false
+        bool $asArray = false,
+        bool $hasIndexBy = false
     ) {
         parent::__construct($className);
 
         $this->modelClass = $modelClass;
         $this->asArray = $asArray;
+        $this->hasIndexBy = $hasIndexBy;
     }
 
     public function getModelClass(): string {
@@ -30,6 +34,10 @@ final class ActiveQueryObjectType extends ObjectType {
 
     public function isAsArray(): bool {
         return $this->asArray;
+    }
+
+    public function hasIndexBy(): bool {
+        return $this->hasIndexBy;
     }
 
     public function describe(VerbosityLevel $level): string {

@@ -50,7 +50,23 @@ final class ActiveQueryBuilderReturnTypeExtension implements DynamicMethodReturn
                 throw new ShouldNotHappenException(sprintf('Invalid argument provided to asArray method at line %d', $methodCall->getLine()));
             }
 
-            return new ActiveQueryObjectType($calledOnType->getModelClass(), $calledOnType->getClassName(), $argType->getValue());
+            return new ActiveQueryObjectType(
+                $calledOnType->getModelClass(),
+                $calledOnType->getClassName(),
+                $argType->getValue(),
+                $calledOnType->hasIndexBy(),
+            );
+        }
+
+        if ($methodName === 'indexBy') {
+            $argType = $scope->getType($methodCall->getArgs()[0]->value);
+
+            return new ActiveQueryObjectType(
+                $calledOnType->getModelClass(),
+                $calledOnType->getClassName(),
+                $calledOnType->isAsArray(),
+                !$argType instanceof NullType,
+            );
         }
 
         if ($methodName === 'one') {
@@ -64,14 +80,14 @@ final class ActiveQueryBuilderReturnTypeExtension implements DynamicMethodReturn
 
         if ($methodName === 'all') {
             return new ArrayType(
-                new IntegerType(),
+                $calledOnType->hasIndexBy() ? new StringType() : new IntegerType(),
                 $calledOnType->isAsArray()
                     ? new ArrayType(new StringType(), new MixedType())
                     : new ActiveRecordObjectType($calledOnType->getModelClass()),
             );
         }
 
-        return new ActiveQueryObjectType($calledOnType->getModelClass(), $calledOnType->getClassName(), $calledOnType->isAsArray());
+        return $calledOnType;
     }
 
 }
