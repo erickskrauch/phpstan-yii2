@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 use Proget\Tests\PHPStan\Yii2\Yii\Article;
 use Proget\Tests\PHPStan\Yii2\Yii\Comment;
+use yii\db\BatchQueryResult;
 use function PHPStan\Testing\assertType;
 
 // Simple cases
@@ -28,3 +29,15 @@ assertType('array<string, array<string, mixed>>', Comment::find()->asArray()->in
 assertType('array<string, array<string, mixed>>', Comment::find()->asArray()->indexBy(fn() => 'key')->all());
 assertType('array<int, ' . Comment::class . '>', Comment::find()->indexBy(null)->all());
 assertType('array<int, array<string, mixed>>', Comment::find()->asArray()->indexBy(null)->all());
+
+// Batch
+assertType(BatchQueryResult::class . '<int, array<int, ' . Comment::class . '>>', Comment::find()->batch(250));
+assertType(BatchQueryResult::class . '<int, array<int, array<string, mixed>>>', Comment::find()->asArray()->batch(250));
+assertType(BatchQueryResult::class . '<int, array<string, ' . Comment::class . '>>', Comment::find()->indexBy('user_id')->batch(250));
+assertType(BatchQueryResult::class . '<int, array<string, array<string, mixed>>>', Comment::find()->asArray()->indexBy('user_id')->batch(250));
+
+// Each
+assertType(BatchQueryResult::class . '<int, ' . Comment::class . '>', Comment::find()->each(250));
+assertType(BatchQueryResult::class . '<int, array<string, mixed>>', Comment::find()->asArray()->each(250));
+assertType(BatchQueryResult::class . '<string, ' . Comment::class . '>', Comment::find()->indexBy('user_id')->each(250));
+assertType(BatchQueryResult::class . '<string, array<string, mixed>>', Comment::find()->asArray()->indexBy('user_id')->each(250));

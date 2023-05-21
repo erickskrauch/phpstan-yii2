@@ -12,6 +12,7 @@ use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\Constant\ConstantBooleanType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
+use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\NullType;
@@ -20,6 +21,7 @@ use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use yii\db\ActiveQueryInterface;
+use yii\db\BatchQueryResult;
 
 final class ActiveQueryBuilderReturnTypeExtension implements DynamicMethodReturnTypeExtension {
 
@@ -34,7 +36,7 @@ final class ActiveQueryBuilderReturnTypeExtension implements DynamicMethodReturn
             return true;
         }
 
-        return in_array($methodReflection->getName(), ['one', 'all'], true);
+        return in_array($methodReflection->getName(), ['one', 'all', 'batch', 'each'], true);
     }
 
     public function getTypeFromMethodCall(MethodReflection $methodReflection, MethodCall $methodCall, Scope $scope): Type {
@@ -84,6 +86,33 @@ final class ActiveQueryBuilderReturnTypeExtension implements DynamicMethodReturn
                 $calledOnType->isAsArray()
                     ? new ArrayType(new StringType(), new MixedType())
                     : new ActiveRecordObjectType($calledOnType->getModelClass()),
+            );
+        }
+
+        if ($methodName === 'batch') {
+            return new GenericObjectType(
+                BatchQueryResult::class,
+                [
+                    new IntegerType(),
+                    new ArrayType(
+                        $calledOnType->hasIndexBy() ? new StringType() : new IntegerType(),
+                        $calledOnType->isAsArray()
+                            ? new ArrayType(new StringType(), new MixedType())
+                            : new ActiveRecordObjectType($calledOnType->getModelClass()),
+                    ),
+                ],
+            );
+        }
+
+        if ($methodName === 'each') {
+            return new GenericObjectType(
+                BatchQueryResult::class,
+                [
+                    $calledOnType->hasIndexBy() ? new StringType() : new IntegerType(),
+                    $calledOnType->isAsArray()
+                        ? new ArrayType(new StringType(), new MixedType())
+                        : new ActiveRecordObjectType($calledOnType->getModelClass()),
+                ],
             );
         }
 

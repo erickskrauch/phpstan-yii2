@@ -5,6 +5,7 @@ parameters:
     - src/Stubs/ActiveQuery.stub
     - src/Stubs/ActiveRecord.stub
     - src/Stubs/BaseYii.stub
+    - src/Stubs/BatchQueryResult.stub
     - src/Stubs/ColumnSchemaBuilder.stub
     - src/Stubs/Connection.stub
     - src/Stubs/HeaderCollection.stub

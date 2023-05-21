@@ -32,4 +32,18 @@ class ActiveQuery {
      */
     public function indexBy($column) {}
 
+    /**
+     * @param int $batchSize
+     * @param \yii\db\Connection|null $db
+     * @return \yii\db\BatchQueryResult<int, array<int|string, T|array<string, string>>>
+     */
+    public function batch($batchSize = 100, $db = null) {}
+
+    /**
+     * @param int $batchSize
+     * @param \yii\db\Connection|null $db
+     * @return \yii\db\BatchQueryResult<int|string, T|array<string, string>>
+     */
+    public function each($batchSize = 100, $db = null) {}
+
 }
