@@ -6,9 +6,8 @@ namespace Proget\Tests\PHPStan\Yii2\Type;
 use Proget\Tests\PHPStan\Yii2\AbstractTypeInferenceTestCase;
 
 /**
- * @covers \Proget\PHPStan\Yii2\Type\ActiveQueryObjectType
- * @covers \Proget\PHPStan\Yii2\Type\ActiveRecordFindReturnTypeExtension
  * @covers \Proget\PHPStan\Yii2\Type\ActiveRecordRelationReturnTypeExtension
+ * @covers \Proget\PHPStan\Yii2\Type\ActiveQueryObjectType
  */
 final class ActiveRecordRelationReturnTypeExtensionTest extends AbstractTypeInferenceTestCase {
 

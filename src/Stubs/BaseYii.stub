@@ -12,41 +12,41 @@ class BaseYii {
      *
      * @return T
      */
-    public static function createObject($type, array $params = []);
+    public static function createObject($type, array $params = []) {}
 
     /**
      * @param string|array<mixed>|\Throwable $message
      * @param string $category
      * @return void
      */
-    public static function debug($message, $category = 'application');
+    public static function debug($message, $category = 'application') {}
 
     /**
      * @param string|array<mixed>|\Throwable $message
      * @param string $category
      * @return void
      */
-    public static function trace($message, $category = 'application');
+    public static function trace($message, $category = 'application') {}
 
     /**
      * @param string|array<mixed>|\Throwable $message
      * @param string $category
      * @return void
      */
-    public static function error($message, $category = 'application');
+    public static function error($message, $category = 'application') {}
 
     /**
      * @param string|array<mixed>|\Throwable $message
      * @param string $category
      * @return void
      */
-    public static function warning($message, $category = 'application');
+    public static function warning($message, $category = 'application') {}
 
     /**
      * @param string|array<mixed>|\Throwable $message
      * @param string $category
      * @return void
      */
-    public static function info($message, $category = 'application');
+    public static function info($message, $category = 'application') {}
 
 }

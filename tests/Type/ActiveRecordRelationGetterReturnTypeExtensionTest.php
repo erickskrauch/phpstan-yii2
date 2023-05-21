@@ -6,16 +6,16 @@ namespace Proget\Tests\PHPStan\Yii2\Type;
 use Proget\Tests\PHPStan\Yii2\AbstractTypeInferenceTestCase;
 
 /**
- * @covers \Proget\PHPStan\Yii2\Type\ActiveRecordFindReturnTypeExtension
+ * @covers \Proget\PHPStan\Yii2\Type\ActiveRecordRelationGetterReturnTypeExtension
  * @covers \Proget\PHPStan\Yii2\Type\ActiveQueryObjectType
  */
-final class ActiveRecordFindReturnTypeExtensionTest extends AbstractTypeInferenceTestCase {
+final class ActiveRecordRelationGetterReturnTypeExtensionTest extends AbstractTypeInferenceTestCase {
 
     /**
      * @return iterable<mixed>
      */
     public static function dataFileAsserts(): iterable {
-        yield from self::gatherAssertTypes(__DIR__ . '/data/active-record-find-return-type.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/active-record-relation-getter-return-type.php');
     }
 
     /**

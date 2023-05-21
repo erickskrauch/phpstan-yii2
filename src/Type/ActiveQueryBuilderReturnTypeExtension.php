@@ -40,7 +40,7 @@ final class ActiveQueryBuilderReturnTypeExtension implements DynamicMethodReturn
     public function getTypeFromMethodCall(MethodReflection $methodReflection, MethodCall $methodCall, Scope $scope): Type {
         $calledOnType = $scope->getType($methodCall->var);
         if (!$calledOnType instanceof ActiveQueryObjectType) {
-            return $calledOnType;
+            return ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
         }
 
         $methodName = $methodReflection->getName();

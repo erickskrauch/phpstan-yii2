@@ -12,18 +12,18 @@ class ActiveQuery {
      * @param class-string<T> $modelClass
      * @param array<mixed> $config
      */
-    public function __construct($modelClass, $config = []);
+    public function __construct($modelClass, $config = []) {}
 
     /**
      * @param \yii\db\Connection|null $db
      * @return T|array<string, string>|null
      */
-    public function one($db = null);
+    public function one($db = null) {}
 
     /**
      * @param \yii\db\Connection|null $db
      * @return T[]|array<string, string>
      */
-    public function all($db = null);
+    public function all($db = null) {}
 
 }

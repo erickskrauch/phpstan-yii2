@@ -12,6 +12,6 @@ class HeaderCollection {
      * @param bool $first
      * @return ($first is true ? string|T : non-empty-array<string>|T)
      */
-    public function get($name, $default = null, $first = true);
+    public function get($name, $default = null, $first = true) {}
 
 }
