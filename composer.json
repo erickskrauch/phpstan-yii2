@@ -11,8 +11,9 @@
     ],
     "require": {
         "php": "^7.4 || ^8.0",
-        "nikic/php-parser": "^4.1.0",
-        "phpstan/phpstan": "^1.6"
+        "nikic/php-parser": "^4 || ^5",
+        "phpstan/phpstan": "^1.6",
+        "yiisoft/yii2": "~2.0.36"
     },
     "require-dev": {
         "ely/php-code-style": "^1",
@@ -20,8 +21,7 @@
         "friendsofphp/php-cs-fixer": "^3.13",
         "phpstan/extension-installer": "^1.1",
         "phpstan/phpstan-phpunit": "^1",
-        "phpunit/phpunit": "^9",
-        "yiisoft/yii2": "^2.0.42"
+        "phpunit/phpunit": "^9"
     },
     "repositories": [
         {
