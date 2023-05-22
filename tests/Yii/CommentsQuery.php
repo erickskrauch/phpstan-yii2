@@ -14,10 +14,16 @@ final class CommentsQuery extends ActiveQuery {
         return $this->andWhere(['is_deleted' => false]);
     }
 
-    public function notDeletedStatic(): static {
+    /**
+     * @return static
+     */
+    public function notDeletedStatic() {
         return $this->andWhere(['is_deleted' => false]);
     }
 
+    /**
+     * @return $this
+     */
     public function notDeletedThis(): self {
         return $this->andWhere(['is_deleted' => false]);
     }
