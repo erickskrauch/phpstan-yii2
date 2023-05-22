@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-use Proget\Tests\PHPStan\Yii2\Yii\Article;
+use ErickSkrauch\PHPStan\Yii2\Tests\Yii\Article;
 use function PHPStan\Testing\assertType;
 
 // Isset

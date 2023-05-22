@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
 
-use Proget\Tests\PHPStan\Yii2\Yii\Article;
-use Proget\Tests\PHPStan\Yii2\Yii\Comment;
+use ErickSkrauch\PHPStan\Yii2\Tests\Yii\Article;
+use ErickSkrauch\PHPStan\Yii2\Tests\Yii\Comment;
 use yii\db\BatchQueryResult;
 use function PHPStan\Testing\assertType;
 

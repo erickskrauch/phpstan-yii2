@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace Proget\Tests\PHPStan\Yii2\Type;
+namespace ErickSkrauch\PHPStan\Yii2\Tests\Type;
 
-use Proget\Tests\PHPStan\Yii2\AbstractTypeInferenceTestCase;
+use ErickSkrauch\PHPStan\Yii2\Tests\AbstractTypeInferenceTestCase;
 
 /**
- * @covers \Proget\PHPStan\Yii2\Type\ContainerDynamicMethodReturnTypeExtension
+ * @covers \ErickSkrauch\PHPStan\Yii2\Type\ContainerDynamicMethodReturnTypeExtension
  */
 final class ContainerDynamicMethodReturnTypeExtensionTest extends AbstractTypeInferenceTestCase {
 

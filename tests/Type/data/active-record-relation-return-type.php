@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-use Proget\Tests\PHPStan\Yii2\Yii\Article;
-use Proget\Tests\PHPStan\Yii2\Yii\Comment;
-use Proget\Tests\PHPStan\Yii2\Yii\CommentsQuery;
+use ErickSkrauch\PHPStan\Yii2\Tests\Yii\Article;
+use ErickSkrauch\PHPStan\Yii2\Tests\Yii\Comment;
+use ErickSkrauch\PHPStan\Yii2\Tests\Yii\CommentsQuery;
 use yii\db\ActiveQuery;
 use function PHPStan\Testing\assertType;
 

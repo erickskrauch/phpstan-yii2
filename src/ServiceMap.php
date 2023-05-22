@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Proget\PHPStan\Yii2;
+namespace ErickSkrauch\PHPStan\Yii2;
 
 use Closure;
 use InvalidArgumentException;

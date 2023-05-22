@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Proget\Tests\PHPStan\Yii2;
+namespace ErickSkrauch\PHPStan\Yii2\Tests;
 
 use PHPStan\Testing\TypeInferenceTestCase;
 

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Proget\PHPStan\Yii2\Type;
+namespace ErickSkrauch\PHPStan\Yii2\Type;
 
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\VerbosityLevel;

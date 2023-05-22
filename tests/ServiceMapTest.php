@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace Proget\Tests\PHPStan\Yii2;
+namespace ErickSkrauch\PHPStan\Yii2\Tests;
 
+use ErickSkrauch\PHPStan\Yii2\ServiceMap;
+use ErickSkrauch\PHPStan\Yii2\Tests\Yii\Article;
 use Exception;
 use InvalidArgumentException;
 use PhpParser\Node\Scalar\String_;
 use PHPUnit\Framework\TestCase;
-use Proget\PHPStan\Yii2\ServiceMap;
-use Proget\Tests\PHPStan\Yii2\Yii\Article;
 use RuntimeException;
 use SplObjectStorage;
 use SplStack;

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Proget\Tests\PHPStan\Yii2\Yii;
+namespace ErickSkrauch\PHPStan\Yii2\Tests\Yii;
 
 use yii\db\ActiveRecord;
 

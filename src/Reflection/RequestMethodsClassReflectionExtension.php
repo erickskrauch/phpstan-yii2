@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Proget\PHPStan\Yii2\Reflection;
+namespace ErickSkrauch\PHPStan\Yii2\Reflection;
 
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;

@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Proget\Tests\PHPStan\Yii2\Stubs;
+namespace ErickSkrauch\PHPStan\Yii2\Tests\Stubs;
 
-use Proget\Tests\PHPStan\Yii2\AbstractTypeInferenceTestCase;
+use ErickSkrauch\PHPStan\Yii2\Tests\AbstractTypeInferenceTestCase;
 
 final class HeaderCollectionStubTest extends AbstractTypeInferenceTestCase {
 

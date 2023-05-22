@@ -23,34 +23,34 @@ parametersSchema:
   ])
 
 services:
-  - class: Proget\PHPStan\Yii2\Reflection\ApplicationPropertiesClassReflectionExtension
+  - class: ErickSkrauch\PHPStan\Yii2\Reflection\ApplicationPropertiesClassReflectionExtension
     tags: [phpstan.broker.propertiesClassReflectionExtension]
 
-  - class: Proget\PHPStan\Yii2\Reflection\RequestMethodsClassReflectionExtension
+  - class: ErickSkrauch\PHPStan\Yii2\Reflection\RequestMethodsClassReflectionExtension
     tags: [phpstan.broker.methodsClassReflectionExtension]
 
-  - class: Proget\PHPStan\Yii2\Reflection\RequestPropertiesClassReflectionExtension
+  - class: ErickSkrauch\PHPStan\Yii2\Reflection\RequestPropertiesClassReflectionExtension
     tags: [phpstan.broker.propertiesClassReflectionExtension]
 
-  - class: Proget\PHPStan\Yii2\Reflection\ResponsePropertiesClassReflectionExtension
+  - class: ErickSkrauch\PHPStan\Yii2\Reflection\ResponsePropertiesClassReflectionExtension
     tags: [phpstan.broker.propertiesClassReflectionExtension]
 
-  - class: Proget\PHPStan\Yii2\Reflection\UserPropertiesClassReflectionExtension
+  - class: ErickSkrauch\PHPStan\Yii2\Reflection\UserPropertiesClassReflectionExtension
     tags: [phpstan.broker.propertiesClassReflectionExtension]
 
-  - class: Proget\PHPStan\Yii2\Type\ActiveQueryBuilderReturnTypeExtension
+  - class: ErickSkrauch\PHPStan\Yii2\Type\ActiveQueryBuilderReturnTypeExtension
     tags: [phpstan.broker.dynamicMethodReturnTypeExtension]
 
-  - class: Proget\PHPStan\Yii2\Type\ActiveRecordRelationReturnTypeExtension
+  - class: ErickSkrauch\PHPStan\Yii2\Type\ActiveRecordRelationReturnTypeExtension
     tags: [phpstan.broker.dynamicMethodReturnTypeExtension]
 
-  - class: Proget\PHPStan\Yii2\Type\ContainerDynamicMethodReturnTypeExtension
+  - class: ErickSkrauch\PHPStan\Yii2\Type\ContainerDynamicMethodReturnTypeExtension
     tags: [phpstan.broker.dynamicMethodReturnTypeExtension]
 
-  - class: Proget\PHPStan\Yii2\Type\ActiveRecordFindReturnTypeExtension
+  - class: ErickSkrauch\PHPStan\Yii2\Type\ActiveRecordFindReturnTypeExtension
     tags: [phpstan.broker.dynamicStaticMethodReturnTypeExtension]
 
-  - class: Proget\PHPStan\Yii2\Type\ActiveRecordRelationGetterReturnTypeExtension
+  - class: ErickSkrauch\PHPStan\Yii2\Type\ActiveRecordRelationGetterReturnTypeExtension
     tags: [phpstan.broker.dynamicMethodReturnTypeExtension]
 
-  - Proget\PHPStan\Yii2\ServiceMap(%yii2.config_path%)
+  - ErickSkrauch\PHPStan\Yii2\ServiceMap(%yii2.config_path%)

@@ -1,16 +1,12 @@
 {
-    "name": "proget-hq/phpstan-yii2",
+    "name": "erickskrauch/phpstan-yii2",
     "description": "Yii2 extension for PHPStan",
     "license": "MIT",
     "type": "library",
     "authors": [
         {
-            "name": "Arkadiusz Kondas",
-            "email": "arkadiusz.kondas@gmail.com"
-        },
-        {
-            "name": "Marcin Michalski",
-            "email": "marcin@michalski.dev"
+            "name": "ErickSkrauch",
+            "email": "erickskrauch@ely.by"
         }
     ],
     "require": {
@@ -35,7 +31,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "Proget\\PHPStan\\Yii2\\": "src/"
+            "ErickSkrauch\\PHPStan\\Yii2\\": "src/"
         },
         "exclude-from-classmap": [
             "src/Stubs/*"
@@ -43,7 +39,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Proget\\Tests\\PHPStan\\Yii2\\": "tests/"
+            "ErickSkrauch\\PHPStan\\Yii2\\Tests\\": "tests/"
         }
     },
     "config": {
