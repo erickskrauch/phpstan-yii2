@@ -1,0 +1,52 @@
+<?php
+declare(strict_types=1);
+
+namespace yii;
+
+class BaseYii {
+
+    /**
+     * @template T
+     * @param  class-string<T>|array{class: class-string<T>}|array{__class: class-string<T>}|callable(): T $type
+     * @param array<mixed> $params
+     *
+     * @return T
+     */
+    public static function createObject($type, array $params = []) {}
+
+    /**
+     * @param string|array<mixed>|\Throwable $message
+     * @param string $category
+     * @return void
+     */
+    public static function debug($message, $category = 'application') {}
+
+    /**
+     * @param string|array<mixed>|\Throwable $message
+     * @param string $category
+     * @return void
+     */
+    public static function trace($message, $category = 'application') {}
+
+    /**
+     * @param string|array<mixed>|\Throwable $message
+     * @param string $category
+     * @return void
+     */
+    public static function error($message, $category = 'application') {}
+
+    /**
+     * @param string|array<mixed>|\Throwable $message
+     * @param string $category
+     * @return void
+     */
+    public static function warning($message, $category = 'application') {}
+
+    /**
+     * @param string|array<mixed>|\Throwable $message
+     * @param string $category
+     * @return void
+     */
+    public static function info($message, $category = 'application') {}
+
+}

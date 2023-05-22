@@ -1,0 +1,14 @@
+<?php
+declare(strict_types=1);
+
+namespace yii\validators;
+
+class Validator {
+
+    /**
+     * @param mixed $value
+     * @return array{string, ?array<string, string>}|null
+     */
+    protected function validateValue($value) {}
+
+}

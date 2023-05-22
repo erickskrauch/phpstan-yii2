@@ -1,36 +1,39 @@
 <?php
+declare(strict_types=1);
 
-use Proget\Tests\PHPStan\Yii2\Yii\MyActiveRecord;
+use ErickSkrauch\PHPStan\Yii2\Tests\Yii\Article;
 
 return [
     'components' => [
         'customComponent' => [
-            'class' => MyActiveRecord::class,
+            'class' => Article::class,
         ],
-        'customInitializedComponent' => new MyActiveRecord(),
+        'customInitializedComponent' => new Article(),
+        'componentToContainer' => yii\caching\CacheInterface::class,
+        'request' => [
+            'baseUrl' => '/',
+        ],
     ],
     'container' => [
         'singletons' => [
-            'singleton-string' => MyActiveRecord::class,
-            'singleton-closure' => function(): \SplStack {
-                return new \SplStack();
+            'singleton-string' => Article::class,
+            Stringable::class => fn() => new class implements Stringable {
+                public function __toString(): string {
+                    return '';
+                }
             },
-            'singleton-service' => ['class' => \SplObjectStorage::class],
-            'singleton-nested-service-class' => [
-                ['class' => \SplFileInfo::class]
-            ]
         ],
         'definitions' => [
-            'closure' => function(): \SplStack {
-                return new \SplStack();
+            'closure' => function(): SplStack {
+                return new SplStack();
             },
-            'service' => ['class' => \SplObjectStorage::class],
-            'nested-service-class' => [
-                ['class' => \SplFileInfo::class]
+            'service' => [
+                'class' => SplObjectStorage::class,
             ],
-            MyActiveRecord::class => [
+            Article::class => [
                 'flag' => 'foo',
             ],
-        ]
-    ]
+            Throwable::class => Exception::class,
+        ],
+    ],
 ];

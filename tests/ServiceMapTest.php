@@ -1,79 +1,86 @@
 <?php
-
 declare(strict_types=1);
 
-namespace Proget\Tests\PHPStan\Yii2;
+namespace ErickSkrauch\PHPStan\Yii2\Tests;
 
+use ErickSkrauch\PHPStan\Yii2\ServiceMap;
+use ErickSkrauch\PHPStan\Yii2\Tests\Yii\Article;
+use Exception;
+use InvalidArgumentException;
 use PhpParser\Node\Scalar\String_;
 use PHPUnit\Framework\TestCase;
-use Proget\PHPStan\Yii2\ServiceMap;
-use Proget\Tests\PHPStan\Yii2\Yii\MyActiveRecord;
+use RuntimeException;
+use SplObjectStorage;
+use SplStack;
+use Stringable;
+use Throwable;
+use yii\caching\CacheInterface;
+use yii\web\Request;
+use yii\web\Response;
 
-final class ServiceMapTest extends TestCase
-{
-    public function testThrowExceptionWhenConfigurationFileDoesNotExist(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
+final class ServiceMapTest extends TestCase {
+
+    public function testItLoadsServicesAndComponents(): void {
+        $serviceMap = new ServiceMap(__DIR__ . '/assets/yii-config-valid.php');
+
+        // Singletons
+        $this->assertSame(Article::class, $serviceMap->getServiceClassFromNode(new String_('singleton-string')));
+        $this->assertSame(Article::class, $serviceMap->getServiceClassFromNode(new String_(Article::class)));
+        $this->assertSame(Exception::class, $serviceMap->getServiceClassFromNode(new String_(Throwable::class)));
+        $this->assertSame(Stringable::class, $serviceMap->getServiceClassFromNode(new String_(Stringable::class)));
+
+        // Definitions
+        $this->assertSame(SplStack::class, $serviceMap->getServiceClassFromNode(new String_('closure')));
+        $this->assertSame(SplObjectStorage::class, $serviceMap->getServiceClassFromNode(new String_('service')));
+
+        // Components
+        $this->assertSame(Article::class, $serviceMap->getComponentClassById('customComponent'));
+        $this->assertSame(Article::class, $serviceMap->getComponentClassById('customInitializedComponent'));
+        $this->assertSame(CacheInterface::class, $serviceMap->getComponentClassById('componentToContainer'));
+        $this->assertSame(Request::class, $serviceMap->getComponentClassById('request'));
+        $this->assertSame(Response::class, $serviceMap->getComponentClassById('response'));
+    }
+
+    public function testThrowExceptionWhenConfigurationFileDoesNotExist(): void {
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Provided config path invalid-path must exist');
 
         new ServiceMap('invalid-path');
     }
 
-    public function testThrowExceptionWhenClosureServiceHasMissingReturnType(): void
-    {
-        $this->expectException(\RuntimeException::class);
+    public function testThrowExceptionWhenClosureServiceHasMissingReturnType(): void {
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Please provide return type for no-return-type service closure');
 
-        new ServiceMap(__DIR__.DIRECTORY_SEPARATOR.'assets'.DIRECTORY_SEPARATOR.'yii-config-invalid.php');
+        new ServiceMap(__DIR__ . '/assets/yii-config-invalid.php');
     }
 
-    public function testThrowExceptionWhenServiceHasUnsupportedType(): void
-    {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Unsupported service definition for unsupported-type');
+    public function testThrowExceptionWhenServiceHasUnsupportedType(): void {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Unsupported definition for unsupported-type');
 
-        new ServiceMap(__DIR__.DIRECTORY_SEPARATOR.'assets'.DIRECTORY_SEPARATOR.'yii-config-invalid-unsupported-type.php');
+        new ServiceMap(__DIR__ . '/assets/yii-config-invalid-unsupported-type.php');
     }
 
-    public function testThrowExceptionWhenServiceHasUnsupportedArray(): void
-    {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Cannot guess service definition for unsupported-array');
+    public function testThrowExceptionWhenServiceHasUnsupportedArray(): void {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Unsupported definition for unsupported-array');
 
-        new ServiceMap(__DIR__.DIRECTORY_SEPARATOR.'assets'.DIRECTORY_SEPARATOR.'yii-config-invalid-unsupported-array.php');
+        new ServiceMap(__DIR__ . '/assets/yii-config-invalid-unsupported-array.php');
     }
 
-    public function testThrowExceptionWhenComponentHasInvalidValue(): void
-    {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Invalid value for component with id customComponent. Expected object or array.');
+    public function testThrowExceptionWhenComponentHasInvalidValue(): void {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Unsupported definition for customComponent');
 
-        new ServiceMap(__DIR__.DIRECTORY_SEPARATOR.'assets'.DIRECTORY_SEPARATOR.'yii-config-invalid-component.php');
-    }
-
-    public function testItLoadsServicesAndComponents(): void
-    {
-        $serviceMap = new ServiceMap(__DIR__.DIRECTORY_SEPARATOR.'assets'.DIRECTORY_SEPARATOR.'yii-config-valid.php');
-
-        self::assertSame(MyActiveRecord::class, $serviceMap->getServiceClassFromNode(new String_('singleton-string')));
-        self::assertSame(MyActiveRecord::class, $serviceMap->getServiceClassFromNode(new String_(MyActiveRecord::class)));
-        self::assertSame(\SplStack::class, $serviceMap->getServiceClassFromNode(new String_('singleton-closure')));
-        self::assertSame(\SplObjectStorage::class, $serviceMap->getServiceClassFromNode(new String_('singleton-service')));
-        self::assertSame(\SplFileInfo::class, $serviceMap->getServiceClassFromNode(new String_('singleton-nested-service-class')));
-
-        self::assertSame(\SplStack::class, $serviceMap->getServiceClassFromNode(new String_('closure')));
-        self::assertSame(\SplObjectStorage::class, $serviceMap->getServiceClassFromNode(new String_('service')));
-        self::assertSame(\SplFileInfo::class, $serviceMap->getServiceClassFromNode(new String_('nested-service-class')));
-
-        self::assertSame(MyActiveRecord::class, $serviceMap->getComponentClassById('customComponent'));
-        self::assertSame(MyActiveRecord::class, $serviceMap->getComponentClassById('customInitializedComponent'));
+        new ServiceMap(__DIR__ . '/assets/yii-config-invalid-component.php');
     }
 
     /**
      * @doesNotPerformAssertions
      */
-    public function testItAllowsConfigWithoutSingletons(): void
-    {
-        new ServiceMap(__DIR__.DIRECTORY_SEPARATOR.'assets'.DIRECTORY_SEPARATOR.'yii-config-no-singletons.php');
+    public function testItAllowsConfigWithoutSingletons(): void {
+        new ServiceMap(__DIR__ . '/assets/yii-config-no-singletons.php');
     }
+
 }

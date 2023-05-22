@@ -1,0 +1,7 @@
+includes:
+  - %rootDir%/../../../extension.neon
+parameters:
+  yii2:
+    config_path: %rootDir%/../../../tests/container-config.php
+  bootstrapFiles:
+    - %rootDir%/../../yiisoft/yii2/Yii.php

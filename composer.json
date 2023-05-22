@@ -1,49 +1,27 @@
 {
-    "name": "proget-hq/phpstan-yii2",
-    "type": "library",
+    "name": "erickskrauch/phpstan-yii2",
     "description": "Yii2 extension for PHPStan",
     "license": "MIT",
+    "type": "library",
     "authors": [
         {
-            "name": "Arkadiusz Kondas",
-            "email": "arkadiusz.kondas@gmail.com"
-        },
-        {
-            "name": "Marcin Michalski",
-            "email": "marcin@michalski.dev"
+            "name": "ErickSkrauch",
+            "email": "erickskrauch@ely.by"
         }
     ],
     "require": {
-        "php": "^7.2|^8.0",
+        "php": "^7.4 || ^8.0",
         "nikic/php-parser": "^4.1.0",
-        "phpstan/phpstan": "^1.0"
+        "phpstan/phpstan": "^1.6"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^3.1",
-        "phpunit/phpunit": "^8.0",
-        "yiisoft/yii2": "^2.0.42",
-        "phpstan/phpstan-phpunit": "^1.0"
-    },
-    "autoload": {
-        "psr-4": {
-            "Proget\\PHPStan\\Yii2\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Proget\\Tests\\PHPStan\\Yii2\\": "tests/"
-        }
-    },
-    "scripts": {
-        "check": [
-            "@check-cs",
-            "@stan",
-            "@tests"
-        ],
-        "check-cs": "@php php-cs-fixer fix --dry-run --diff",
-        "fix-cs": "@php php-cs-fixer fix",
-        "stan": "@php phpstan analyse -l max -c ./phpstan.neon ./src ./tests",
-        "tests": "@php phpunit"
+        "ely/php-code-style": "^1",
+        "ergebnis/composer-normalize": "^2.28",
+        "friendsofphp/php-cs-fixer": "^3.13",
+        "phpstan/extension-installer": "^1.1",
+        "phpstan/phpstan-phpunit": "^1",
+        "phpunit/phpunit": "^9",
+        "yiisoft/yii2": "^2.0.42"
     },
     "repositories": [
         {
@@ -51,9 +29,32 @@
             "url": "https://asset-packagist.org"
         }
     ],
+    "autoload": {
+        "psr-4": {
+            "ErickSkrauch\\PHPStan\\Yii2\\": "src/"
+        },
+        "exclude-from-classmap": [
+            "src/Stubs/*"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ErickSkrauch\\PHPStan\\Yii2\\Tests\\": "tests/"
+        }
+    },
     "config": {
         "allow-plugins": {
-            "yiisoft/yii2-composer": true
+            "yiisoft/yii2-composer": true,
+            "phpstan/extension-installer": true,
+            "ergebnis/composer-normalize": true
+        },
+        "sort-packages": true
+    },
+    "extra": {
+        "phpstan": {
+            "includes": [
+                "extension.neon"
+            ]
         }
     }
 }

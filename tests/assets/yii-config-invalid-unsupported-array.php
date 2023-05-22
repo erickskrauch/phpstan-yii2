@@ -1,7 +1,10 @@
 <?php
+declare(strict_types=1);
 
 return [
-    'container' => ['singletons' => [
-        'unsupported-array' => [],
-    ]]
+    'container' => [
+        'singletons' => [
+            'unsupported-array' => [],
+        ],
+    ],
 ];

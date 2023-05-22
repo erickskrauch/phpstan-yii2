@@ -1,8 +1,7 @@
 <?php
-
 declare(strict_types=1);
 
-namespace Proget\PHPStan\Yii2\Reflection;
+namespace ErickSkrauch\PHPStan\Yii2\Reflection;
 
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
@@ -11,20 +10,15 @@ use PHPStan\Reflection\ReflectionProvider;
 use yii\console\Request as ConsoleRequest;
 use yii\web\Request as WebRequest;
 
-final class RequestMethodsClassReflectionExtension implements MethodsClassReflectionExtension
-{
-    /**
-     * @var ReflectionProvider
-     */
-    private $reflectionProvider;
+final class RequestMethodsClassReflectionExtension implements MethodsClassReflectionExtension {
 
-    public function __construct(ReflectionProvider $reflectionProvider)
-    {
+    private ReflectionProvider $reflectionProvider;
+
+    public function __construct(ReflectionProvider $reflectionProvider) {
         $this->reflectionProvider = $reflectionProvider;
     }
 
-    public function hasMethod(ClassReflection $classReflection, string $methodName): bool
-    {
+    public function hasMethod(ClassReflection $classReflection, string $methodName): bool {
         if ($classReflection->getName() !== ConsoleRequest::class) {
             return false;
         }
@@ -32,8 +26,8 @@ final class RequestMethodsClassReflectionExtension implements MethodsClassReflec
         return $this->reflectionProvider->getClass(WebRequest::class)->hasMethod($methodName);
     }
 
-    public function getMethod(ClassReflection $classReflection, string $methodName): MethodReflection
-    {
+    public function getMethod(ClassReflection $classReflection, string $methodName): MethodReflection {
         return $this->reflectionProvider->getClass(WebRequest::class)->getNativeMethod($methodName);
     }
+
 }

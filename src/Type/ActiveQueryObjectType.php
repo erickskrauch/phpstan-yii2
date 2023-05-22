@@ -1,45 +1,47 @@
 <?php
-
 declare(strict_types=1);
 
-namespace Proget\PHPStan\Yii2\Type;
+namespace ErickSkrauch\PHPStan\Yii2\Type;
 
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\VerbosityLevel;
-use yii\db\ActiveQuery;
+use yii\db\ActiveQueryInterface;
 
-class ActiveQueryObjectType extends ObjectType
-{
-    /**
-     * @var string
-     */
-    private $modelClass;
+final class ActiveQueryObjectType extends ObjectType {
 
-    /**
-     * @var bool
-     */
-    private $asArray;
+    private string $modelClass;
 
-    public function __construct(string $modelClass, bool $asArray)
-    {
-        parent::__construct(ActiveQuery::class);
+    private bool $asArray;
+
+    private bool $hasIndexBy;
+
+    public function __construct(
+        string $modelClass,
+        string $className = ActiveQueryInterface::class,
+        bool $asArray = false,
+        bool $hasIndexBy = false
+    ) {
+        parent::__construct($className);
 
         $this->modelClass = $modelClass;
         $this->asArray = $asArray;
+        $this->hasIndexBy = $hasIndexBy;
     }
 
-    public function getModelClass(): string
-    {
+    public function getModelClass(): string {
         return $this->modelClass;
     }
 
-    public function isAsArray(): bool
-    {
+    public function isAsArray(): bool {
         return $this->asArray;
     }
 
-    public function describe(VerbosityLevel $level): string
-    {
+    public function hasIndexBy(): bool {
+        return $this->hasIndexBy;
+    }
+
+    public function describe(VerbosityLevel $level): string {
         return sprintf('%s<%s>', parent::describe($level), $this->modelClass);
     }
+
 }

@@ -1,8 +1,7 @@
 <?php
-
 declare(strict_types=1);
 
-namespace Proget\PHPStan\Yii2\Reflection;
+namespace ErickSkrauch\PHPStan\Yii2\Reflection;
 
 use PHPStan\Analyser\OutOfClassScope;
 use PHPStan\Reflection\ClassReflection;
@@ -12,20 +11,15 @@ use PHPStan\Reflection\ReflectionProvider;
 use yii\console\Response as ConsoleResponse;
 use yii\web\Response as WebResponse;
 
-final class ResponsePropertiesClassReflectionExtension implements PropertiesClassReflectionExtension
-{
-    /**
-     * @var ReflectionProvider
-     */
-    private $reflectionProvider;
+final class ResponsePropertiesClassReflectionExtension implements PropertiesClassReflectionExtension {
 
-    public function __construct(ReflectionProvider $reflectionProvider)
-    {
+    private ReflectionProvider $reflectionProvider;
+
+    public function __construct(ReflectionProvider $reflectionProvider) {
         $this->reflectionProvider = $reflectionProvider;
     }
 
-    public function hasProperty(ClassReflection $classReflection, string $propertyName): bool
-    {
+    public function hasProperty(ClassReflection $classReflection, string $propertyName): bool {
         if ($classReflection->getName() !== ConsoleResponse::class) {
             return false;
         }
@@ -33,8 +27,8 @@ final class ResponsePropertiesClassReflectionExtension implements PropertiesClas
         return $this->reflectionProvider->getClass(WebResponse::class)->hasProperty($propertyName);
     }
 
-    public function getProperty(ClassReflection $classReflection, string $propertyName): PropertyReflection
-    {
+    public function getProperty(ClassReflection $classReflection, string $propertyName): PropertyReflection {
         return $this->reflectionProvider->getClass(WebResponse::class)->getProperty($propertyName, new OutOfClassScope());
     }
+
 }

@@ -1,44 +1,57 @@
 parameters:
-    yii2:
-        config_path: null
-    stubFiles:
-        - stubs/BaseYii.stub
+  yii2:
+    config_path: null
+  stubFiles:
+    - src/Stubs/ActiveQuery.stub
+    - src/Stubs/ActiveRecord.stub
+    - src/Stubs/BaseYii.stub
+    - src/Stubs/BatchQueryResult.stub
+    - src/Stubs/ColumnSchemaBuilder.stub
+    - src/Stubs/Connection.stub
+    - src/Stubs/HeaderCollection.stub
+    - src/Stubs/Migration.stub
+    - src/Stubs/Validator.stub
+  dynamicConstantNames:
+    - YII_ENV
+    - YII_ENV_PROD
+    - YII_ENV_DEV
+    - YII_ENV_TEST
+    - YII_DEBUG
 
 parametersSchema:
-	yii2: structure([
-		config_path: schema(string(), nullable())
-	])
+  yii2: structure([
+    config_path: schema(string(), nullable())
+  ])
 
 services:
-    -
-        class: Proget\PHPStan\Yii2\Reflection\ApplicationPropertiesClassReflectionExtension
-        tags: [phpstan.broker.propertiesClassReflectionExtension]
-    -
-        class: Proget\PHPStan\Yii2\Reflection\RequestMethodsClassReflectionExtension
-        tags: [phpstan.broker.methodsClassReflectionExtension]
-    -
-        class: Proget\PHPStan\Yii2\Reflection\RequestPropertiesClassReflectionExtension
-        tags: [phpstan.broker.propertiesClassReflectionExtension]
-    -
-        class: Proget\PHPStan\Yii2\Reflection\ResponsePropertiesClassReflectionExtension
-        tags: [phpstan.broker.propertiesClassReflectionExtension]
-    -
-        class: Proget\PHPStan\Yii2\Reflection\UserPropertiesClassReflectionExtension
-        tags: [phpstan.broker.propertiesClassReflectionExtension]
-    -
-        class: Proget\PHPStan\Yii2\Type\ActiveQueryDynamicMethodReturnTypeExtension
-        tags: [phpstan.broker.dynamicMethodReturnTypeExtension]
-    -
-        class: Proget\PHPStan\Yii2\Type\ActiveRecordDynamicMethodReturnTypeExtension
-        tags: [phpstan.broker.dynamicMethodReturnTypeExtension]
-    -
-        class: Proget\PHPStan\Yii2\Type\HeaderCollectionDynamicMethodReturnTypeExtension
-        tags: [phpstan.broker.dynamicMethodReturnTypeExtension]
-    -
-        class: Proget\PHPStan\Yii2\Type\ActiveRecordDynamicStaticMethodReturnTypeExtension
-        tags: [phpstan.broker.dynamicStaticMethodReturnTypeExtension]
-    -
-        class: Proget\PHPStan\Yii2\Type\ContainerDynamicMethodReturnTypeExtension
-        tags: [phpstan.broker.dynamicMethodReturnTypeExtension]
+  - class: ErickSkrauch\PHPStan\Yii2\Reflection\ApplicationPropertiesClassReflectionExtension
+    tags: [phpstan.broker.propertiesClassReflectionExtension]
 
-    - Proget\PHPStan\Yii2\ServiceMap(%yii2.config_path%)
+  - class: ErickSkrauch\PHPStan\Yii2\Reflection\RequestMethodsClassReflectionExtension
+    tags: [phpstan.broker.methodsClassReflectionExtension]
+
+  - class: ErickSkrauch\PHPStan\Yii2\Reflection\RequestPropertiesClassReflectionExtension
+    tags: [phpstan.broker.propertiesClassReflectionExtension]
+
+  - class: ErickSkrauch\PHPStan\Yii2\Reflection\ResponsePropertiesClassReflectionExtension
+    tags: [phpstan.broker.propertiesClassReflectionExtension]
+
+  - class: ErickSkrauch\PHPStan\Yii2\Reflection\UserPropertiesClassReflectionExtension
+    tags: [phpstan.broker.propertiesClassReflectionExtension]
+
+  - class: ErickSkrauch\PHPStan\Yii2\Type\ActiveQueryBuilderReturnTypeExtension
+    tags: [phpstan.broker.dynamicMethodReturnTypeExtension]
+
+  - class: ErickSkrauch\PHPStan\Yii2\Type\ActiveRecordRelationReturnTypeExtension
+    tags: [phpstan.broker.dynamicMethodReturnTypeExtension]
+
+  - class: ErickSkrauch\PHPStan\Yii2\Type\ContainerDynamicMethodReturnTypeExtension
+    tags: [phpstan.broker.dynamicMethodReturnTypeExtension]
+
+  - class: ErickSkrauch\PHPStan\Yii2\Type\ActiveRecordFindReturnTypeExtension
+    tags: [phpstan.broker.dynamicStaticMethodReturnTypeExtension]
+
+  - class: ErickSkrauch\PHPStan\Yii2\Type\ActiveRecordRelationGetterReturnTypeExtension
+    tags: [phpstan.broker.dynamicMethodReturnTypeExtension]
+
+  - ErickSkrauch\PHPStan\Yii2\ServiceMap(%yii2.config_path%)
