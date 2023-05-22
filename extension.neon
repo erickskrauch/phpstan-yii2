@@ -10,6 +10,7 @@ parameters:
     - src/Stubs/Connection.stub
     - src/Stubs/HeaderCollection.stub
     - src/Stubs/Migration.stub
+    - src/Stubs/Validator.stub
   dynamicConstantNames:
     - YII_ENV
     - YII_ENV_PROD
