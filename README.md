@@ -1,48 +1,58 @@
 # Yii2 extension for PHPStan
 
-[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.2-8892BF.svg)](https://php.net/)
-[![Latest Stable Version](https://img.shields.io/packagist/v/proget-hq/phpstan-yii2.svg)](https://packagist.org/packages/proget-hq/phpstan-yii2)
-[![Build Status](https://github.com/proget-hq/phpstan-yii2/workflows/build/badge.svg)](https://github.com/proget-hq/phpstan-yii2/actions?query=workflow%3Abuild)
-[![Total Downloads](https://poser.pugx.org/proget-hq/phpstan-yii2/downloads.svg)](https://packagist.org/packages/proget-hq/phpstan-yii2)
-[![License](https://poser.pugx.org/proget-hq/phpstan-yii2/license.svg)](https://packagist.org/packages/proget-hq/phpstan-yii2)
+An extension for [PHPStan](https://phpstan.org) providing types support and rules to work with the [Yii2 framework](https://www.yiiframework.com). Hardfork of [proget-hq/phpstan-yii2](https://github.com/proget-hq/phpstan-yii2).
+
+[![Latest Version on Packagist][ico-version]][link-packagist]
+[![Total Downloads][ico-downloads]][link-downloads]
+[![Software License][ico-license]](LICENSE.md)
+[![Build Status][ico-build-status]][link-build-status]
 
 ## What does it do?
 
-* Provides correct return type for `Yii::$container->get('service_id')` method,
-* Provides correct methods and properties for `Yii::$app->request`
-* Ignore common problems with response objects (to be removed).
-
-## Compatibility
-
-| PHPStan version | Yii2 extension version |
-|-----------------|------------------------|
-| 1.x             | 0.8.x                  |
-| 0.12            | 0.7.x                  |
-| 0.11            | 0.5.x - 0.6.x          |
-| 0.10.3          | 0.4.x                  |
-| 0.10            | 0.3.0                  |
-| 0.9.2           | 0.2.0                  |
+* Provides stub files for better analysis of array shapes.
+* Mark `YII_*` constants as dynamic.
+* Significantly improves support for `ActiveRecord` and `ActiveQuery`.
+* Provides correct return type for `Yii::$container->get('service_id')` method.
+* Provides correct return type for `Yii::$app->request->headers->get('authorization')` method based on the `$first` parameter.
 
 ## Installation
 
+To use this extension, require it in [Composer](https://getcomposer.org):
+
 ```sh
-composer require --dev proget-hq/phpstan-yii2
+composer require --dev erickskrauch/phpstan-yii2
 ```
+
+If you also install [phpstan/extension-installer](https://github.com/phpstan/extension-installer) then you're all set!
+
+<details>
+  <summary>Manual installation</summary>
+
+  If you don't want to use `phpstan/extension-installer`, include `extension.neon` in your project's PHPStan config:
+
+  ```
+  includes:
+    - vendor/erickskrauch/phpstan-yii2/extension.neon
+  ```
+</details>
 
 ## Configuration
 
-Put this into your `phpstan.neon` config:
+You have to provide the path to the configuration file for your application. For [Advanced](https://github.com/yiisoft/yii2-app-advanced) project template your path might look like this:
 
 ```neon
-includes:
-	- vendor/proget-hq/phpstan-yii2/extension.neon
 parameters:
-    yii2:
-        config_path: %rootDir%/../../../config/test.php
+  yii2:
+    config_path: common/config/main.php
 ```
 
-## Limitations
+*You may want to create a separate configuration file for PHPStan describing the services available throughout the application. But usually, `common` is sufficient, because it contains all the services universally available in any module of the application.*
 
-Container closures must have return types.
+[ico-version]: https://img.shields.io/packagist/v/erickskrauch/phpstan-yii2.svg?style=flat-square
+[ico-license]: https://img.shields.io/badge/license-MIT-green.svg?style=flat-square
+[ico-downloads]: https://img.shields.io/packagist/dt/erickskrauch/phpstan-yii2.svg?style=flat-square
+[ico-build-status]: https://img.shields.io/github/actions/workflow/status/erickskrauch/phpstan-yii2/ci.yml?branch=master&style=flat-square
 
-You have to provide a path to `config/test.php` or other yii2 config file.
+[link-packagist]: https://packagist.org/packages/erickskrauch/phpstan-yii2
+[link-downloads]: https://packagist.org/packages/erickskrauch/phpstan-yii2/stats
+[link-build-status]: https://github.com/erickskrauch/phpstan-yii2/actions
