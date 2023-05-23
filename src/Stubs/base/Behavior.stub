@@ -5,4 +5,11 @@ namespace yii\base;
 
 class Behavior {
 
+    /**
+     * TODO: I would like to specify callable as "callable(Event $event): void",
+     *       but in that case it's not possible to use any class inherited from Event
+     * @return array<string, string|callable>
+     */
+    public function events() {}
+
 }

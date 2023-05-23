@@ -6,6 +6,7 @@ parameters:
     - src/Stubs/base/Behavior.stub
     - src/Stubs/base/Component.stub
     - src/Stubs/base/Controller.stub
+    - src/Stubs/base/Event.stub
     - src/Stubs/base/Model.stub
 
     - src/Stubs/db/ActiveQuery.stub
