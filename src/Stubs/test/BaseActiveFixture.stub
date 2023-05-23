@@ -1,0 +1,13 @@
+<?php
+declare(strict_types=1);
+
+namespace yii\test;
+
+class BaseActiveFixture {
+
+    /**
+     * @var class-string<\yii\db\ActiveRecord>
+     */
+    public $modelClass;
+
+}
