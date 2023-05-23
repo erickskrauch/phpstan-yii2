@@ -1,0 +1,13 @@
+<?php
+declare(strict_types=1);
+
+namespace yii\base;
+
+class Model {
+
+    /**
+     * @return array<array{string|string[], string|class-string<\yii\validators\Validator>|callable(string $attribute, array<string, mixed> $params, \yii\validators\InlineValidator $validator, mixed $value): void}>
+     */
+    public function rules() {}
+
+}

@@ -9,7 +9,9 @@ parameters:
     - src/Stubs/ColumnSchemaBuilder.stub
     - src/Stubs/Connection.stub
     - src/Stubs/HeaderCollection.stub
+    - src/Stubs/InlineValidator.stub
     - src/Stubs/Migration.stub
+    - src/Stubs/Model.stub
     - src/Stubs/Validator.stub
   dynamicConstantNames:
     - YII_ENV
