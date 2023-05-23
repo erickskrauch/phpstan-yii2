@@ -2,6 +2,7 @@ parameters:
   yii2:
     config_path: null
   stubFiles:
+    - src/Stubs/Action.stub
     - src/Stubs/ActiveQuery.stub
     - src/Stubs/ActiveRecord.stub
     - src/Stubs/BaseYii.stub
@@ -10,6 +11,7 @@ parameters:
     - src/Stubs/ColumnSchemaBuilder.stub
     - src/Stubs/Component.stub
     - src/Stubs/Connection.stub
+    - src/Stubs/Controller.stub
     - src/Stubs/HeaderCollection.stub
     - src/Stubs/InlineValidator.stub
     - src/Stubs/Migration.stub

@@ -1,0 +1,13 @@
+<?php
+declare(strict_types=1);
+
+namespace yii\base;
+
+class Controller {
+
+    /**
+     * @return array<string, class-string<Action>|array{class: class-string<Action>}|array{__class: class-string<Action>}|callable(): Action>
+     */
+    public function actions() {}
+
+}
