@@ -1,0 +1,13 @@
+<?php
+declare(strict_types=1);
+
+namespace yii\base;
+
+class Component {
+
+    /**
+     * @return array<Behavior|class-string<Behavior>|array{class: class-string<Behavior>}|array{__class: class-string<Behavior>}|callable(): Behavior>
+     */
+    public function behaviors() {}
+
+}

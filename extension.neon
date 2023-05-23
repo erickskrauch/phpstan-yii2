@@ -6,7 +6,9 @@ parameters:
     - src/Stubs/ActiveRecord.stub
     - src/Stubs/BaseYii.stub
     - src/Stubs/BatchQueryResult.stub
+    - src/Stubs/Behavior.stub
     - src/Stubs/ColumnSchemaBuilder.stub
+    - src/Stubs/Component.stub
     - src/Stubs/Connection.stub
     - src/Stubs/HeaderCollection.stub
     - src/Stubs/InlineValidator.stub
