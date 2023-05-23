@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace ErickSkrauch\PHPStan\Yii2\Tests\Stubs;
+namespace ErickSkrauch\PHPStan\Yii2\Tests\Stubs\base;
 
 use yii\base\Controller as Yii2Controller;
 use yii\web\ViewAction;

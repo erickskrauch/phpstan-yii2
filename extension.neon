@@ -2,21 +2,25 @@ parameters:
   yii2:
     config_path: null
   stubFiles:
-    - src/Stubs/Action.stub
-    - src/Stubs/ActiveQuery.stub
-    - src/Stubs/ActiveRecord.stub
+    - src/Stubs/base/Action.stub
+    - src/Stubs/base/Behavior.stub
+    - src/Stubs/base/Component.stub
+    - src/Stubs/base/Controller.stub
+    - src/Stubs/base/Model.stub
+
+    - src/Stubs/db/ActiveQuery.stub
+    - src/Stubs/db/ActiveRecord.stub
+    - src/Stubs/db/BatchQueryResult.stub
+    - src/Stubs/db/ColumnSchemaBuilder.stub
+    - src/Stubs/db/Connection.stub
+    - src/Stubs/db/Migration.stub
+
+    - src/Stubs/validators/InlineValidator.stub
+    - src/Stubs/validators/Validator.stub
+
+    - src/Stubs/web/HeaderCollection.stub
+
     - src/Stubs/BaseYii.stub
-    - src/Stubs/BatchQueryResult.stub
-    - src/Stubs/Behavior.stub
-    - src/Stubs/ColumnSchemaBuilder.stub
-    - src/Stubs/Component.stub
-    - src/Stubs/Connection.stub
-    - src/Stubs/Controller.stub
-    - src/Stubs/HeaderCollection.stub
-    - src/Stubs/InlineValidator.stub
-    - src/Stubs/Migration.stub
-    - src/Stubs/Model.stub
-    - src/Stubs/Validator.stub
   dynamicConstantNames:
     - YII_ENV
     - YII_ENV_PROD
