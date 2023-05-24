@@ -10,4 +10,15 @@ class Model {
      */
     public function rules() {}
 
+    /**
+     * @param string|null $attribute
+     * @return ($attribute is null ? array<string, string[]> : list<string>)
+     */
+    public function getErrors($attribute = null) {}
+
+    /**
+     * @return array<string, string>
+     */
+    public function getFirstErrors() {}
+
 }
