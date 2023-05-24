@@ -15,7 +15,7 @@ final class ActiveRecordFindReturnTypeExtensionTest extends AbstractTypeInferenc
      * @return iterable<mixed>
      */
     public static function dataFileAsserts(): iterable {
-        yield from self::gatherAssertTypes(__DIR__ . '/data/active-record-find-return-type.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/_data/active-record-find-return-type.php');
     }
 
     /**

@@ -11,7 +11,7 @@ final class HeaderCollectionStubTest extends AbstractTypeInferenceTestCase {
      * @return iterable<mixed>
      */
     public static function dataFileAsserts(): iterable {
-        yield from self::gatherAssertTypes(__DIR__ . '/data/header-collection.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/_data/header-collection.php');
     }
 
     /**

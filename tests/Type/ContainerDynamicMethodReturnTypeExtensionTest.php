@@ -14,7 +14,7 @@ final class ContainerDynamicMethodReturnTypeExtensionTest extends AbstractTypeIn
      * @return iterable<mixed>
      */
     public static function dataFileAsserts(): iterable {
-        yield from self::gatherAssertTypes(__DIR__ . '/data/container-dynamic-method-return-type.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/_data/container-dynamic-method-return-type.php');
     }
 
     /**

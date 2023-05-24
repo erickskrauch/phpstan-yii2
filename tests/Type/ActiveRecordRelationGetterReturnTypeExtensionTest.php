@@ -15,7 +15,7 @@ final class ActiveRecordRelationGetterReturnTypeExtensionTest extends AbstractTy
      * @return iterable<mixed>
      */
     public static function dataFileAsserts(): iterable {
-        yield from self::gatherAssertTypes(__DIR__ . '/data/active-record-relation-getter-return-type.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/_data/active-record-relation-getter-return-type.php');
     }
 
     /**

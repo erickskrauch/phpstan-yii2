@@ -14,7 +14,7 @@ final class ActiveRecordObjectTypeTest extends AbstractTypeInferenceTestCase {
      * @return iterable<mixed>
      */
     public static function dataFileAsserts(): iterable {
-        yield from self::gatherAssertTypes(__DIR__ . '/data/active-record-object-type.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/_data/active-record-object-type.php');
     }
 
     /**

@@ -11,7 +11,7 @@ final class BaseYiiStubTest extends AbstractTypeInferenceTestCase {
      * @return iterable<mixed>
      */
     public static function dataFileAsserts(): iterable {
-        yield from self::gatherAssertTypes(__DIR__ . '/data/base-yii.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/_data/base-yii.php');
     }
 
     /**
