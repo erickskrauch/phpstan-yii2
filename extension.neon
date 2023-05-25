@@ -9,6 +9,12 @@ parameters:
     - src/Stubs/base/Event.stub
     - src/Stubs/base/Model.stub
 
+    - src/Stubs/data/ActiveDataProvider.stub
+    - src/Stubs/data/ArrayDataProvider.stub
+    - src/Stubs/data/BaseDataProvider.stub
+    - src/Stubs/data/DataProviderInterface.stub
+    - src/Stubs/data/SqlDataProvider.stub
+
     - src/Stubs/db/ActiveQuery.stub
     - src/Stubs/db/ActiveRecord.stub
     - src/Stubs/db/BatchQueryResult.stub

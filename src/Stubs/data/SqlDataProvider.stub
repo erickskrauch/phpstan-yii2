@@ -1,0 +1,23 @@
+<?php
+declare(strict_types=1);
+
+namespace yii\data;
+
+/**
+ * @template TKey
+ * @template TValue
+ * @extends BaseDataProvider<TKey, TValue>
+ */
+class SqlDataProvider extends BaseDataProvider {
+
+    /**
+     * @var array<string, scalar>
+     */
+    public $params;
+
+    /**
+     * @var string|callable(TValue $row): TKey|null
+     */
+    public $key;
+
+}

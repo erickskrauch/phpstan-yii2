@@ -1,0 +1,36 @@
+<?php
+declare(strict_types=1);
+
+namespace yii\data;
+
+/**
+ * @template TKey
+ * @template TValue
+ * @implements DataProviderInterface<TKey, TValue>
+ */
+abstract class BaseDataProvider implements DataProviderInterface {
+
+    /**
+     * @return list<TValue>
+     */
+    abstract protected function prepareModels() {}
+
+    /**
+     * @param list<TValue> $models
+     * @return list<TKey>
+     */
+    abstract protected function prepareKeys($models) {}
+
+    /**
+     * @param list<TValue> $models
+     * @return void
+     */
+    public function setModels($models) {}
+
+    /**
+     * @param list<TKey> $keys
+     * @return void
+     */
+    public function setKeys($keys) {}
+
+}

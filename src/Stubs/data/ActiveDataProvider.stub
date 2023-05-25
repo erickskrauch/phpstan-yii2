@@ -1,0 +1,20 @@
+<?php
+declare(strict_types=1);
+
+namespace yii\data;
+
+/**
+ * @template TKey
+ * @template TValue
+ * @extends BaseDataProvider<TKey, TValue>
+ */
+class ActiveDataProvider extends BaseDataProvider {
+
+    // TODO: make $query field generic
+
+    /**
+     * @var string|callable(TValue $row): TKey|null
+     */
+    public $key;
+
+}

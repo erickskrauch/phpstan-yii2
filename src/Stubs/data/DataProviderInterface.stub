@@ -1,0 +1,22 @@
+<?php
+declare(strict_types=1);
+
+namespace yii\data;
+
+/**
+ * @template-covariant TKey
+ * @template-covariant TValue
+ */
+interface DataProviderInterface {
+
+    /**
+     * @return array<TKey, TValue>
+     */
+    public function getModels();
+
+    /**
+     * @return list<TKey>
+     */
+    public function getKeys();
+
+}
