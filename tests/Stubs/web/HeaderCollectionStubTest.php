@@ -3,9 +3,11 @@ declare(strict_types=1);
 
 namespace ErickSkrauch\PHPStan\Yii2\Tests\Stubs\web;
 
-use ErickSkrauch\PHPStan\Yii2\Tests\AbstractTypeInferenceTestCase;
+use ErickSkrauch\PHPStan\Yii2\Tests\ConfigTrait;
+use PHPStan\Testing\TypeInferenceTestCase;
 
-final class HeaderCollectionStubTest extends AbstractTypeInferenceTestCase {
+final class HeaderCollectionStubTest extends TypeInferenceTestCase {
+    use ConfigTrait;
 
     /**
      * @return iterable<mixed>

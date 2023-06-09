@@ -3,12 +3,14 @@ declare(strict_types=1);
 
 namespace ErickSkrauch\PHPStan\Yii2\Tests\Type;
 
-use ErickSkrauch\PHPStan\Yii2\Tests\AbstractTypeInferenceTestCase;
+use ErickSkrauch\PHPStan\Yii2\Tests\ConfigTrait;
+use PHPStan\Testing\TypeInferenceTestCase;
 
 /**
  * @covers \ErickSkrauch\PHPStan\Yii2\Type\ActiveRecordObjectType
  */
-final class ActiveRecordObjectTypeTest extends AbstractTypeInferenceTestCase {
+final class ActiveRecordObjectTypeTest extends TypeInferenceTestCase {
+    use ConfigTrait;
 
     /**
      * @return iterable<mixed>

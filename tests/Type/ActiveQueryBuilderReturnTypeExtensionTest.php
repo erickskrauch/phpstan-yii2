@@ -3,13 +3,15 @@ declare(strict_types=1);
 
 namespace ErickSkrauch\PHPStan\Yii2\Tests\Type;
 
-use ErickSkrauch\PHPStan\Yii2\Tests\AbstractTypeInferenceTestCase;
+use ErickSkrauch\PHPStan\Yii2\Tests\ConfigTrait;
+use PHPStan\Testing\TypeInferenceTestCase;
 
 /**
  * @covers \ErickSkrauch\PHPStan\Yii2\Type\ActiveQueryBuilderReturnTypeExtension
  * @covers \ErickSkrauch\PHPStan\Yii2\Type\ActiveQueryObjectType
  */
-final class ActiveQueryBuilderReturnTypeExtensionTest extends AbstractTypeInferenceTestCase {
+final class ActiveQueryBuilderReturnTypeExtensionTest extends TypeInferenceTestCase {
+    use ConfigTrait;
 
     /**
      * @return iterable<mixed>
