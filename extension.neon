@@ -47,6 +47,9 @@ services:
   - class: ErickSkrauch\PHPStan\Yii2\Reflection\ApplicationPropertiesClassReflectionExtension
     tags: [phpstan.broker.propertiesClassReflectionExtension]
 
+  - class: ErickSkrauch\PHPStan\Yii2\Reflection\BaseObjectPropertiesClassReflectionExtension
+    tags: [phpstan.broker.propertiesClassReflectionExtension]
+
   - class: ErickSkrauch\PHPStan\Yii2\Reflection\RequestMethodsClassReflectionExtension
     tags: [phpstan.broker.methodsClassReflectionExtension]
 

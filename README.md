@@ -14,6 +14,7 @@ An extension for [PHPStan](https://phpstan.org) providing types support and rule
 * Significantly improves support for `ActiveRecord` and `ActiveQuery`.
 * Provides correct return type for `Yii::$container->get('service_id')` method.
 * Provides correct return type for `Yii::$app->request->headers->get('authorization')` method based on the `$first` parameter.
+* Provides reflection extension for `BaseObject`'s getters and setters.
 
 ## Installation
 
