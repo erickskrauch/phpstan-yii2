@@ -20,6 +20,7 @@
         "ergebnis/composer-normalize": "^2.28",
         "friendsofphp/php-cs-fixer": "^3.13",
         "phpstan/extension-installer": "^1.1",
+        "phpstan/phpstan": "1.11.x-dev",
         "phpstan/phpstan-phpunit": "^1",
         "phpunit/phpunit": "^9"
     },
