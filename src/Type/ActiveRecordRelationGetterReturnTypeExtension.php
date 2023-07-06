@@ -46,7 +46,7 @@ final class ActiveRecordRelationGetterReturnTypeExtension implements DynamicMeth
         /** @var ObjectType $arType */
         $arType = $returnType->getTemplateType(ActiveQuery::class, 'T');
 
-        return new ActiveQueryObjectType($arType->getClassName(), $returnType->getClassName());
+        return new ActiveQueryObjectType($arType, $returnType->getClassName());
     }
 
 }

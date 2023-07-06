@@ -11,9 +11,10 @@ assertType(ActiveQuery::class . '<' . Article::class . '>', Article::find());
 assertType(CommentsQuery::class . '<' . Comment::class . '>', Comment::find());
 
 $class = Article::class;
+assertType(ActiveQuery::class . '<' . Article::class . '>', $class::find());
+
 if (random_int(0, 10) === 0) {
     $class = Comment::class;
 }
 
-// TODO: future scope: "ActiveQuery<Article>|CommentsQuery<Comment>"
-assertType(ActiveQuery::class, $class::find());
+assertType(CommentsQuery::class . '<' . Comment::class . '>|' . ActiveQuery::class . '<' . Article::class . '>', $class::find());

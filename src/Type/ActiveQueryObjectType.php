@@ -3,33 +3,33 @@ declare(strict_types=1);
 
 namespace ErickSkrauch\PHPStan\Yii2\Type;
 
+use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
-use PHPStan\Type\VerbosityLevel;
 use yii\db\ActiveQueryInterface;
 
-final class ActiveQueryObjectType extends ObjectType {
+final class ActiveQueryObjectType extends GenericObjectType {
 
-    private string $modelClass;
+    private ObjectType $model;
 
     private bool $asArray;
 
     private bool $hasIndexBy;
 
     public function __construct(
-        string $modelClass,
+        ObjectType $model,
         string $className = ActiveQueryInterface::class,
         bool $asArray = false,
         bool $hasIndexBy = false
     ) {
-        parent::__construct($className);
+        parent::__construct($className, [$model]);
 
-        $this->modelClass = $modelClass;
+        $this->model = $model;
         $this->asArray = $asArray;
         $this->hasIndexBy = $hasIndexBy;
     }
 
-    public function getModelClass(): string {
-        return $this->modelClass;
+    public function getModel(): ObjectType {
+        return $this->model;
     }
 
     public function isAsArray(): bool {
@@ -38,10 +38,6 @@ final class ActiveQueryObjectType extends ObjectType {
 
     public function hasIndexBy(): bool {
         return $this->hasIndexBy;
-    }
-
-    public function describe(VerbosityLevel $level): string {
-        return sprintf('%s<%s>', parent::describe($level), $this->modelClass);
     }
 
 }

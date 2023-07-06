@@ -4,12 +4,18 @@ declare(strict_types=1);
 namespace ErickSkrauch\PHPStan\Yii2\Type;
 
 use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Name;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
+use PHPStan\Reflection\ReflectionProvider;
+use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
+use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
+use PHPStan\Type\TypeCombinator;
+use PHPStan\Type\UnionType;
 use yii\db\ActiveRecordInterface;
 
 /**
@@ -17,6 +23,12 @@ use yii\db\ActiveRecordInterface;
  * so that we can further remember which model we are dealing with
  */
 final class ActiveRecordFindReturnTypeExtension implements DynamicStaticMethodReturnTypeExtension {
+
+    private ReflectionProvider $reflectionProvider;
+
+    public function __construct(ReflectionProvider $reflectionProvider) {
+        $this->reflectionProvider = $reflectionProvider;
+    }
 
     public function getClass(): string {
         return ActiveRecordInterface::class;
@@ -27,16 +39,41 @@ final class ActiveRecordFindReturnTypeExtension implements DynamicStaticMethodRe
     }
 
     public function getTypeFromStaticMethodCall(MethodReflection $methodReflection, StaticCall $methodCall, Scope $scope): ?Type {
-        $class = $methodCall->class;
-        if (!$class instanceof Name) {
-            return null;
+        $calledOn = $methodCall->class;
+        if ($calledOn instanceof Name) {
+            return $this->createType($scope->resolveName($calledOn), $scope);
         }
 
-        $name = $scope->resolveName($class);
-        /** @var \PHPStan\Type\ObjectType $returnType */
-        $returnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
+        if ($calledOn instanceof Variable) {
+            $variableType = $scope->getType($calledOn);
+            if ($variableType instanceof ConstantStringType && $variableType->isClassStringType()->yes()) {
+                return $this->createType($variableType->getValue(), $scope);
+            }
 
-        return new ActiveQueryObjectType($name, $returnType->getClassName());
+            if ($variableType instanceof UnionType) {
+                /** @var Type[] $types */
+                $types = [];
+                foreach ($variableType->getTypes() as $unionType) {
+                    if (!$unionType instanceof ConstantStringType || !$unionType->isClassStringType()->yes()) {
+                        return null;
+                    }
+
+                    $types[] = $this->createType($unionType->getValue(), $scope);
+                }
+
+                return TypeCombinator::union(...$types);
+            }
+        }
+
+        return null;
+    }
+
+    private function createType(string $modelClass, Scope $scope): ActiveQueryObjectType {
+        $method = $this->reflectionProvider->getClass($modelClass)->getMethod('find', $scope);
+        /** @var ObjectType $returnType */
+        $returnType = ParametersAcceptorSelector::selectSingle($method->getVariants())->getReturnType();
+
+        return new ActiveQueryObjectType(new ObjectType($modelClass), $returnType->getClassName());
     }
 
 }

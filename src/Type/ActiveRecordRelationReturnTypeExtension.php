@@ -12,6 +12,7 @@ use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
+use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use yii\db\BaseActiveRecord;
 
@@ -43,10 +44,10 @@ final class ActiveRecordRelationReturnTypeExtension implements DynamicMethodRetu
         }
 
         $class = $this->reflectionProvider->getClass($argType->getValue());
-        /** @var \PHPStan\Type\ObjectType $type */
+        /** @var ObjectType $type */
         $type = ParametersAcceptorSelector::selectSingle($class->getMethod('find', $scope)->getVariants())->getReturnType();
 
-        return new ActiveQueryObjectType($argType->getValue(), $type->getClassName());
+        return new ActiveQueryObjectType(new ObjectType($argType->getValue()), $type->getClassName());
     }
 
 }
