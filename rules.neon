@@ -1,0 +1,2 @@
+rules:
+  - ErickSkrauch\PHPStan\Yii2\Rule\CreateObjectArrayShapeRule

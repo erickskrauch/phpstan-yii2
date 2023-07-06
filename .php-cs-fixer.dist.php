@@ -12,4 +12,6 @@ return Ely\CS\Config::create([
     // Add some really strict rules
     'declare_strict_types' => true,
     'final_class' => true,
+    // Disable controversial rules
+    'comment_to_phpdoc' => false,
 ])->setFinder($finder);
