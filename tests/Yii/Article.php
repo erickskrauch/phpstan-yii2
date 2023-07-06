@@ -6,8 +6,12 @@ namespace ErickSkrauch\PHPStan\Yii2\Tests\Yii;
 use yii\db\ActiveRecord;
 
 /**
+ * Fields:
  * @property int    $id
  * @property string $text
+ *
+ * Relations:
+ * @property-read Comment[] $comments
  */
 final class Article extends ActiveRecord {
 

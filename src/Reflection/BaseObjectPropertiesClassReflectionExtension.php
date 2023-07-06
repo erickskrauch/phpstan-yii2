@@ -18,6 +18,11 @@ final class BaseObjectPropertiesClassReflectionExtension implements PropertiesCl
     }
 
     public function hasProperty(ClassReflection $classReflection, string $propertyName): bool {
+        // The extension shouldn't work when phpdoc for the property is presented
+        if (self::hasPropertyFromPhpDoc($classReflection, $propertyName)) {
+            return false;
+        }
+
         if ($classReflection->getName() !== BaseObject::class && !$classReflection->isSubclassOf(BaseObject::class)) {
             return false;
         }
@@ -57,6 +62,15 @@ final class BaseObjectPropertiesClassReflectionExtension implements PropertiesCl
         }
 
         return new BaseObjectPropertyReflection($getter, $setter);
+    }
+
+    private static function hasPropertyFromPhpDoc(ClassReflection $classReflection, string $propertyName): bool {
+        $phpDoc = $classReflection->getResolvedPhpDoc();
+        if ($phpDoc === null) {
+            return false;
+        }
+
+        return isset($phpDoc->getPropertyTags()[$propertyName]);
     }
 
     /**

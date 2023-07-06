@@ -6,10 +6,15 @@ namespace ErickSkrauch\PHPStan\Yii2\Tests\Reflection;
 use ErickSkrauch\PHPStan\Yii2\Reflection\BaseObjectPropertiesClassReflectionExtension;
 use ErickSkrauch\PHPStan\Yii2\Reflection\BaseObjectPropertyReflection;
 use ErickSkrauch\PHPStan\Yii2\Tests\ConfigTrait;
+use ErickSkrauch\PHPStan\Yii2\Tests\Yii\Article;
+use ErickSkrauch\PHPStan\Yii2\Tests\Yii\Comment;
 use ErickSkrauch\PHPStan\Yii2\Tests\Yii\MyComponent;
 use PHPStan\Testing\PHPStanTestCase;
 use PHPStan\Type\NeverType;
+use PHPStan\Type\NullType;
+use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
+use PHPStan\Type\UnionType;
 
 /**
  * @covers \ErickSkrauch\PHPStan\Yii2\Reflection\BaseObjectPropertiesClassReflectionExtension
@@ -33,7 +38,8 @@ final class BaseObjectPropertiesClassReflectionExtensionTest extends PHPStanTest
     public static function provideHasPropertyCases(): iterable {
         yield [MyComponent::class, 'privateStringProp', true];
         yield [MyComponent::class, 'readonlyFunctionProp', true];
-        yield [MyComponent::class, 'unknownProp', false];
+        yield 'implicit phpdoc' => [Article::class, 'comments', false];
+        yield 'not exists property' => [MyComponent::class, 'unknownProp', false];
     }
 
     /**
@@ -61,6 +67,16 @@ final class BaseObjectPropertiesClassReflectionExtensionTest extends PHPStanTest
             $this->assertFalse($propertyReflection->isWritable());
             $this->assertInstanceOf(StringType::class, $propertyReflection->getReadableType());
             $this->assertInstanceOf(NeverType::class, $propertyReflection->getWritableType());
+        }];
+        yield [Article::class, 'topComment', function(BaseObjectPropertyReflection $propertyReflection): void {
+            $this->assertTrue($propertyReflection->isReadable());
+            $this->assertFalse($propertyReflection->isWritable());
+            $readableType = $propertyReflection->getReadableType();
+            $this->assertInstanceOf(UnionType::class, $readableType);
+            /** @var UnionType $readableType */
+            $this->assertInstanceOf(ObjectType::class, $readableType->getTypes()[0]);
+            $this->assertSame(Comment::class, $readableType->getTypes()[0]->getClassName());
+            $this->assertInstanceOf(NullType::class, $readableType->getTypes()[1]);
         }];
     }
 
