@@ -9,3 +9,11 @@ use function PHPStan\Testing\assertType;
 
 assertType(ActiveQuery::class . '<' . Article::class . '>', Article::find());
 assertType(CommentsQuery::class . '<' . Comment::class . '>', Comment::find());
+
+$class = Article::class;
+if (random_int(0, 10) === 0) {
+    $class = Comment::class;
+}
+
+// TODO: future scope: "ActiveQuery<Article>|CommentsQuery<Comment>"
+assertType(ActiveQuery::class, $class::find());

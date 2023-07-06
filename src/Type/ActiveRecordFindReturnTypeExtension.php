@@ -26,10 +26,13 @@ final class ActiveRecordFindReturnTypeExtension implements DynamicStaticMethodRe
         return $methodReflection->getName() === 'find';
     }
 
-    public function getTypeFromStaticMethodCall(MethodReflection $methodReflection, StaticCall $methodCall, Scope $scope): Type {
-        /** @var Name $className */
-        $className = $methodCall->class;
-        $name = $scope->resolveName($className);
+    public function getTypeFromStaticMethodCall(MethodReflection $methodReflection, StaticCall $methodCall, Scope $scope): ?Type {
+        $class = $methodCall->class;
+        if (!$class instanceof Name) {
+            return null;
+        }
+
+        $name = $scope->resolveName($class);
         /** @var \PHPStan\Type\ObjectType $returnType */
         $returnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
 
