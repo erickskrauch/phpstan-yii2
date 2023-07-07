@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace yii\db;
 
 /**
- * @template T of \yii\db\ActiveRecord
+ * @template-covariant T of \yii\db\ActiveRecord
  */
 class ActiveQuery {
 
