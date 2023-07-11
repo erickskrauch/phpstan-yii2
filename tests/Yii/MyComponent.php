@@ -10,6 +10,8 @@ use yii\base\Component;
  */
 final class MyComponent extends Component {
 
+    public const TEST = 'stringArg';
+
     public string $publicStringProp = '';
 
     /**
@@ -20,6 +22,10 @@ final class MyComponent extends Component {
     protected string $protectedStringProp = '';
 
     private string  $_privateStringProp = '';
+
+    public function __construct(string $stringArg, int $intArg, array $config = []) {
+        parent::__construct($config);
+    }
 
     public function setPrivateStringProp(string $value): void {
         $this->_privateStringProp = $value;
