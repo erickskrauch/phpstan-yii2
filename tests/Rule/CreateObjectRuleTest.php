@@ -1,0 +1,52 @@
+<?php
+declare(strict_types=1);
+
+namespace ErickSkrauch\PHPStan\Yii2\Tests\Rule;
+
+use ErickSkrauch\PHPStan\Yii2\Rule\CreateObjectRule;
+use ErickSkrauch\PHPStan\Yii2\Tests\ConfigTrait;
+use PHPStan\Rules\Rule;
+use PHPStan\Testing\RuleTestCase;
+
+/**
+ * @extends RuleTestCase<CreateObjectRule>
+ */
+final class CreateObjectRuleTest extends RuleTestCase {
+    use ConfigTrait;
+
+    public function testRule(): void {
+        $this->analyse([__DIR__ . '/_data/create_object_valid.php'], []);
+        $this->analyse([__DIR__ . '/_data/create_object_function_arg.php'], []);
+        $this->analyse([__DIR__ . '/_data/create_object_invalid.php'], [
+            ['Parameter #1 stringArg of class ErickSkrauch\PHPStan\Yii2\Tests\Yii\MyComponent constructor expects string, int given.', 6],
+            ['Parameter #2 intArg of class ErickSkrauch\PHPStan\Yii2\Tests\Yii\MyComponent constructor expects int, string given.', 6],
+            ['Property ErickSkrauch\PHPStan\Yii2\Tests\Yii\MyComponent::$publicStringProp (string) does not accept int.', 6],
+            [
+                'Property ErickSkrauch\PHPStan\Yii2\Tests\Yii\MyComponent::$publicArrayProp (array{key: string}) does not accept array{key: false}.',
+                6,
+                "Offset 'key' (string) does not accept type false.",
+            ],
+            ['Property ErickSkrauch\PHPStan\Yii2\Tests\Yii\MyComponent::$privateStringProp (string) does not accept int.', 6],
+        ]);
+        $this->analyse([__DIR__ . '/_data/create_object_access_private_properties.php'], [
+            ['Access to protected property ErickSkrauch\PHPStan\Yii2\Tests\Yii\MyComponent::$protectedStringProp.', 6],
+            ['Access to private property ErickSkrauch\PHPStan\Yii2\Tests\Yii\MyComponent::$_privateStringProp.', 6],
+        ]);
+        $this->analyse([__DIR__ . '/_data/create_object_set_to_readonly_properties.php'], [
+            ['Property ErickSkrauch\PHPStan\Yii2\Tests\Yii\MyComponent::$readonlyPhpDocStringProp is not writable.', 6],
+            ['Property ErickSkrauch\PHPStan\Yii2\Tests\Yii\MyComponent::$readonlyFunctionProp is not writable.', 6],
+        ]);
+        $this->analyse([__DIR__ . '/_data/create_object_with_indexed_args.php'], [
+            ['Parameter #1 stringArg of class ErickSkrauch\PHPStan\Yii2\Tests\Yii\MyComponent constructor expects string, int given.', 6],
+            ['Parameter #2 intArg of class ErickSkrauch\PHPStan\Yii2\Tests\Yii\MyComponent constructor expects int, string given.', 6],
+        ]);
+        $this->analyse([__DIR__ . '/_data/create_object_with_missing_class.php'], [
+            ['Configuration params array must have "class" or "__class" key', 4],
+        ]);
+    }
+
+    protected function getRule(): Rule {
+        return new CreateObjectRule(self::createReflectionProvider());
+    }
+
+}

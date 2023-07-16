@@ -23,6 +23,7 @@ final class MyComponent extends Component {
 
     private string  $_privateStringProp = '';
 
+    // @phpstan-ignore-next-line ignore unused arguments errors and missing $config type
     public function __construct(string $stringArg, int $intArg, array $config = []) {
         parent::__construct($config);
     }

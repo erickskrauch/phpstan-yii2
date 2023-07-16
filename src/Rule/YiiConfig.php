@@ -5,7 +5,6 @@ namespace ErickSkrauch\PHPStan\Yii2\Rule;
 
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ClassReflection;
-use PHPStan\Reflection\ParameterReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\Constant\ConstantArrayType;
@@ -16,7 +15,27 @@ use PHPStan\Type\VerbosityLevel;
 final class YiiConfig {
 
     /**
-     * @return string[]
+     * @param ConstantArrayType $config
+     * @return string|\PHPStan\Rules\IdentifierRuleError
+     */
+    public static function findClass(ConstantArrayType $config) {
+        $class = $config->getOffsetValueType(new ConstantStringType('__class'));
+        if (count($class->getConstantStrings()) === 1) {
+            return $class->getConstantStrings()[0]->getValue();
+        }
+
+        $class = $config->getOffsetValueType(new ConstantStringType('class'));
+        if (count($class->getConstantStrings()) === 1) {
+            return $class->getConstantStrings()[0]->getValue();
+        }
+
+        return RuleErrorBuilder::message('Configuration params array must have "class" or "__class" key')
+            ->identifier('yiiConfig.missingClass')
+            ->build();
+    }
+
+    /**
+     * @phpstan-return list<\PHPStan\Rules\IdentifierRuleError>
      */
     public static function validateArray(ClassReflection $classReflection, ConstantArrayType $config, Scope $scope): array {
         $errors = [];
@@ -24,8 +43,11 @@ final class YiiConfig {
         foreach ($config->getKeyTypes() as $i => $key) {
             /** @var \PHPStan\Type\Type $value */
             $value = $config->getValueTypes()[$i];
+            // @phpstan-ignore-next-line getKeyType() returns only those or ConstantIntType
             if (!$key instanceof ConstantStringType) {
-                // TODO: should introduce an error that all keys must be strings
+                $errors[] = RuleErrorBuilder::message('The object configuration params must be indexed by name')
+                    ->identifier('argument.type')
+                    ->build();
                 continue;
             }
 
@@ -35,11 +57,16 @@ final class YiiConfig {
                 continue;
             }
 
+            // TODO: yii\base\Configurable interface
             // Ignore constructors for a moment since it's an another complicated task
             if ($propertyName === '__construct()') {
                 if (!$value->isConstantArray()->yes()) {
-                    // TODO: reword
-                    $errors[] = RuleErrorBuilder::message(sprintf("The config for %s is wrong: the property %s doesn't exists", $classReflection->getName(), $propertyName))->build();
+                    $errors[] = RuleErrorBuilder::message(sprintf(
+                        'The constructor params must be an array, %s given',
+                        $value->describe(VerbosityLevel::typeOnly()),
+                    ))
+                        ->identifier('argument.type')
+                        ->build();
                     continue;
                 }
 
@@ -54,7 +81,13 @@ final class YiiConfig {
             }
 
             if (!$classReflection->hasProperty($propertyName)) {
-                $errors[] = RuleErrorBuilder::message(sprintf("The config for %s is wrong: the property %s doesn't exists", $classReflection->getName(), $propertyName))->build();
+                $errors[] = RuleErrorBuilder::message(sprintf(
+                    "The config for %s is wrong: the property %s doesn't exists",
+                    $classReflection->getName(),
+                    $propertyName,
+                ))
+                    ->identifier('property.notFound')
+                    ->build();
                 continue;
             }
 
@@ -91,7 +124,7 @@ final class YiiConfig {
                     $property->getDeclaringClass()->getDisplayName(),
                     $propertyName,
                     $target->describe($level),
-                    $target->describe($level),
+                    $value->describe($level),
                 ))
                     ->identifier('assign.propertyType')
                     ->acceptsReasonsTip($result->reasons)
@@ -103,10 +136,9 @@ final class YiiConfig {
     }
 
     /**
-     * @return string[]
+     * @phpstan-return list<\PHPStan\Rules\IdentifierRuleError>
      */
     public static function validateConstructorArgs(ClassReflection $classReflection, ConstantArrayType $config, Scope $scope): array {
-        /** @var ParameterReflection[] $constructorParams */
         $constructorParams = ParametersAcceptorSelector::selectSingle($classReflection->getConstructor()->getVariants())->getParameters();
         /** @var \PHPStan\Type\Type|null $firstKeyType */
         $firstKeyType = null;
@@ -120,7 +152,7 @@ final class YiiConfig {
                 $firstKeyType = $key;
             } elseif (!$firstKeyType instanceof $key) {
                 $errors[] = RuleErrorBuilder::message("Parameters indexed by name and by position in the same array aren't allowed.")
-                    ->nonIgnorable()
+                    ->identifier('yiiConfig.constructorParamsMix')
                     ->build();
                 continue;
             }
@@ -162,6 +194,8 @@ final class YiiConfig {
                     continue;
                 }
             }
+
+            // TODO: prevent direct pass of 'config' param to constructor args (\yii\base\Configurable)
 
             $paramType = $paramReflection->getType();
             $result = $paramType->acceptsWithReason($value, true);

@@ -8,13 +8,14 @@ use PhpParser\Node\Expr\StaticCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
-use PHPStan\Type\Constant\ConstantStringType;
+use PHPStan\Rules\RuleError;
+use PHPStan\Rules\RuleErrorBuilder;
 use yii\BaseYii;
 
 /**
  * @implements Rule<StaticCall>
  */
-final class CreateObjectArrayShapeRule implements Rule {
+final class CreateObjectRule implements Rule {
 
     private ReflectionProvider $reflectionProvider;
 
@@ -30,8 +31,8 @@ final class CreateObjectArrayShapeRule implements Rule {
      * @param StaticCall $node
      */
     public function processNode(Node $node, Scope $scope): array {
-        $class = $node->class;
-        if (!$class instanceof Node\Name) {
+        $calledOn = $node->class;
+        if (!$calledOn instanceof Node\Name) {
             return [];
         }
 
@@ -40,7 +41,11 @@ final class CreateObjectArrayShapeRule implements Rule {
             return [];
         }
 
-        if (!is_a($class->toString(), BaseYii::class, true) || $methodName->toString() !== 'createObject') {
+        if ($methodName->toString() !== 'createObject') {
+            return [];
+        }
+
+        if (!$this->reflectionProvider->getClass($calledOn->toString())->is(BaseYii::class)) {
             return [];
         }
 
@@ -51,25 +56,23 @@ final class CreateObjectArrayShapeRule implements Rule {
 
         /** @var \PHPStan\Type\Constant\ConstantArrayType $config */
         $config = $constantArrays[0];
-
-        /** @var ConstantStringType $class */
-        $class = $config->getOffsetValueType(new ConstantStringType('class'));
-        if (count($class->getConstantStrings()) !== 1) {
-            /** @var ConstantStringType $class */
-            $class = $config->getOffsetValueType(new ConstantStringType('__class'));
-            if (count($class->getConstantStrings()) !== 1) {
-                // TODO: report as an error
-                return [];
-            }
+        $classNameOrError = YiiConfig::findClass($config);
+        if ($classNameOrError instanceof RuleError) {
+            return [$classNameOrError];
         }
 
-        $className = $class->getConstantStrings()[0]->getValue();
-        if (!$this->reflectionProvider->hasClass($className)) {
-            return [];
+        if (!$this->reflectionProvider->hasClass($classNameOrError)) {
+            return [
+                RuleErrorBuilder::message(sprintf('Class %s not found.', $classNameOrError))
+                    ->identifier('class.notFound')
+                    ->discoveringSymbolsTip()
+                    ->build(),
+            ];
         }
 
-        $classReflection = $this->reflectionProvider->getClass($className);
+        $classReflection = $this->reflectionProvider->getClass($classNameOrError);
 
+        // TODO: second argument has priority over __construct()
         return YiiConfig::validateArray($classReflection, $config, $scope);
     }
 
