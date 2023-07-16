@@ -1,2 +1,2 @@
 rules:
-  - ErickSkrauch\PHPStan\Yii2\Rule\CreateObjectArrayShapeRule
+  - ErickSkrauch\PHPStan\Yii2\Rule\CreateObjectRule

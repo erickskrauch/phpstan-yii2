@@ -5,7 +5,8 @@ use ErickSkrauch\PHPStan\Yii2\Tests\Yii\MyComponent;
 
 Yii::createObject([
     'class' => MyComponent::class,
-    'publicStringProp' => 'string',
-    'publicArrayProp' => ['key' => 'hello world'],
-    'privateStringProp' => 'private value',
+    '__construct()' => [
+        123,
+        'string',
+    ],
 ]);
