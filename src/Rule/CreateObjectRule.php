@@ -49,31 +49,69 @@ final class CreateObjectRule implements Rule {
             return [];
         }
 
-        $constantArrays = $scope->getType($node->getArgs()[0]->value)->getConstantArrays();
-        if (count($constantArrays) !== 1) {
+        $errors = [];
+        $args = $node->getArgs();
+        // Probably invalid code so leave it to another rules
+        if (count($args) < 1) {
             return [];
         }
 
-        /** @var \PHPStan\Type\Constant\ConstantArrayType $config */
-        $config = $constantArrays[0];
-        $classNameOrError = YiiConfig::findClass($config);
-        if ($classNameOrError instanceof RuleError) {
-            return [$classNameOrError];
+        $firstArgType = $scope->getType($args[0]->value);
+        if ($firstArgType->isConstantArray()->yes()) {
+            /** @var \PHPStan\Type\Constant\ConstantArrayType $config */
+            $config = $firstArgType->getConstantArrays()[0];
+            $classNameOrError = YiiConfig::findClass($config);
+            if ($classNameOrError instanceof RuleError) {
+                return [$classNameOrError];
+            }
+
+            if (!$this->reflectionProvider->hasClass($classNameOrError)) {
+                return [
+                    RuleErrorBuilder::message(sprintf('Class %s not found.', $classNameOrError))
+                        ->identifier('class.notFound')
+                        ->discoveringSymbolsTip()
+                        ->build(),
+                ];
+            }
+
+            $classReflection = $this->reflectionProvider->getClass($classNameOrError);
+
+            $errors = array_merge($errors, YiiConfig::validateArray($classReflection, $config, $scope));
+        } elseif ($firstArgType->isClassStringType()->yes()) {
+            $classNamesTypes = $firstArgType->getConstantStrings();
+            // At this moment I'll skip supporting of multiple classes at once
+            if (count($classNamesTypes) !== 1) {
+                return [];
+            }
+
+            $className = $classNamesTypes[0]->getValue();
+            if (!$this->reflectionProvider->hasClass($className)) {
+                return [
+                    RuleErrorBuilder::message(sprintf('Class %s not found.', $className))
+                        ->identifier('class.notFound')
+                        ->discoveringSymbolsTip()
+                        ->build(),
+                ];
+            }
+
+            $classReflection = $this->reflectionProvider->getClass($className);
+        } else {
+            // We can't process second argument without knowing the class
+            return [];
         }
 
-        if (!$this->reflectionProvider->hasClass($classNameOrError)) {
-            return [
-                RuleErrorBuilder::message(sprintf('Class %s not found.', $classNameOrError))
-                    ->identifier('class.notFound')
-                    ->discoveringSymbolsTip()
-                    ->build(),
-            ];
+        if (isset($args[1])) {
+            // TODO: it is possible to pass botch 2 argument and __construct() config param.
+            //       at the moment I'll not cover that case.
+            //       Note for future me 2nd argument value has priority when merging with __construct()
+            $secondArgConstantArrays = $scope->getType($args[1]->value)->getConstantArrays();
+            if (count($secondArgConstantArrays) === 1) {
+                $argsConfig = $secondArgConstantArrays[0];
+                $errors = array_merge($errors, YiiConfig::validateConstructorArgs($classReflection, $argsConfig, $scope));
+            }
         }
 
-        $classReflection = $this->reflectionProvider->getClass($classNameOrError);
-
-        // TODO: second argument has priority over __construct()
-        return YiiConfig::validateArray($classReflection, $config, $scope);
+        return $errors;
     }
 
 }
