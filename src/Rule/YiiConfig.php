@@ -43,7 +43,6 @@ final class YiiConfig {
         foreach ($config->getKeyTypes() as $i => $key) {
             /** @var \PHPStan\Type\Type $value */
             $value = $config->getValueTypes()[$i];
-            // @phpstan-ignore-next-line getKeyType() returns only those or ConstantIntType
             if (!$key instanceof ConstantStringType) {
                 $errors[] = RuleErrorBuilder::message('The object configuration params must be indexed by name')
                     ->identifier('argument.type')
