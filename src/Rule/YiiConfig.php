@@ -57,7 +57,6 @@ final class YiiConfig {
             }
 
             // TODO: yii\base\Configurable interface
-            // Ignore constructors for a moment since it's an another complicated task
             if ($propertyName === '__construct()') {
                 if (!$value->isConstantArray()->yes()) {
                     $errors[] = RuleErrorBuilder::message(sprintf(
