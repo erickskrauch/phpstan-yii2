@@ -10,10 +10,10 @@ use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
-use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
+use PHPStan\Type\TypeCombinator;
 use yii\db\BaseActiveRecord;
 
 final class ActiveRecordRelationReturnTypeExtension implements DynamicMethodReturnTypeExtension {
@@ -32,22 +32,32 @@ final class ActiveRecordRelationReturnTypeExtension implements DynamicMethodRetu
         return in_array($methodReflection->getName(), ['hasOne', 'hasMany'], true);
     }
 
-    public function getTypeFromMethodCall(MethodReflection $methodReflection, MethodCall $methodCall, Scope $scope): Type {
-        $arg = $methodCall->args[0];
-        if (!$arg instanceof Arg) {
-            throw new ShouldNotHappenException(sprintf('Unexpected arg %s during method call %s at line %d', get_class($arg), $methodReflection->getName(), $methodCall->getLine()));
+    public function getTypeFromMethodCall(MethodReflection $methodReflection, MethodCall $methodCall, Scope $scope): ?Type {
+        // When method call is invalid - do nothing
+        if (!isset($methodCall->args[0]) || !$methodCall->args[0] instanceof Arg) {
+            return null;
         }
 
-        $argType = $scope->getType($arg->value);
-        if (!$argType instanceof ConstantStringType) {
+        $argType = $scope->getType($methodCall->args[0]->value);
+        if (!$argType->isClassStringType()->yes()) {
             throw new ShouldNotHappenException(sprintf('Invalid argument provided to method %s' . PHP_EOL . 'Hint: You should use ::class instead of ::className()', $methodReflection->getName()));
         }
 
-        $class = $this->reflectionProvider->getClass($argType->getValue());
-        /** @var ObjectType $type */
-        $type = ParametersAcceptorSelector::selectSingle($class->getMethod('find', $scope)->getVariants())->getReturnType();
+        $types = [];
+        foreach ($argType->getConstantStrings() as $constantString) {
+            $class = $this->reflectionProvider->getClass($constantString->getValue());
+            $type = ParametersAcceptorSelector::selectSingle($class->getMethod('find', $scope)->getVariants())->getReturnType();
+            if (!$type->isObject()->yes()) {
+                throw new ShouldNotHappenException(sprintf('Return type of %s::%s must be an object', $class->getName(), $methodReflection->getName()));
+            }
 
-        return new ActiveQueryObjectType(new ObjectType($argType->getValue()), $type->getClassName());
+            $classNames = $type->getObjectClassNames();
+            foreach ($classNames as $className) {
+                $types[] = new ActiveQueryObjectType(new ObjectType($class->getName()), $className);
+            }
+        }
+
+        return TypeCombinator::union(...$types);
     }
 
 }

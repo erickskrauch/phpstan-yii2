@@ -11,36 +11,55 @@ use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\ErrorType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
+use PHPStan\Type\TypeCombinator;
 
 final class ActiveRecordObjectType extends ObjectType {
 
     public function hasOffsetValueType(Type $offsetType): TrinaryLogic {
-        if (!$offsetType instanceof ConstantStringType) {
+        $constantStrings = $offsetType->getConstantStrings();
+        if (empty($constantStrings)) {
             return TrinaryLogic::createNo();
         }
 
         if ($this->isInstanceOf(ArrayAccess::class)->yes()) {
-            return TrinaryLogic::createFromBoolean($this->hasProperty($offsetType->getValue())->yes());
+            return TrinaryLogic::lazyExtremeIdentity($constantStrings, function(ConstantStringType $offset): TrinaryLogic {
+                return $this->hasProperty($offset->getValue());
+            });
         }
 
         return parent::hasOffsetValueType($offsetType);
     }
 
     public function getOffsetValueType(Type $offsetType): Type {
-        if (!$offsetType instanceof ConstantStringType) {
-            // TODO: write words
-            throw new ShouldNotHappenException('write words');
+        $constantStrings = $offsetType->getConstantStrings();
+        if (empty($constantStrings)) {
+            throw new ShouldNotHappenException();
         }
 
-        return $this->getProperty($offsetType->getValue(), new OutOfClassScope())->getReadableType();
+        $types = [];
+        foreach ($constantStrings as $offset) {
+            $types[] = $this->getProperty($offset->getValue(), new OutOfClassScope())->getReadableType();
+        }
+
+        return TypeCombinator::union(...$types);
     }
 
     public function setOffsetValueType(?Type $offsetType, Type $valueType, bool $unionValues = true): Type {
-        if ($offsetType instanceof ConstantStringType && $this->hasProperty($offsetType->getValue())->no()) {
+        if ($offsetType === null) {
             return new ErrorType();
         }
 
-        return $this;
+        $constantStrings = $offsetType->getConstantStrings();
+        if (empty($constantStrings)) {
+            throw new ShouldNotHappenException();
+        }
+
+        $types = [];
+        foreach ($constantStrings as $offset) {
+            $types[] = $this->getProperty($offset->getValue(), new OutOfClassScope())->getWritableType();
+        }
+
+        return TypeCombinator::union(...$types);
     }
 
 }

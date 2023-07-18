@@ -318,12 +318,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "100646ec1fc805b05de3df8c7d22dda9850eab9d"
+                "reference": "af751d33d0dab6f257e7dc97f75cd371a3466562"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/100646ec1fc805b05de3df8c7d22dda9850eab9d",
-                "reference": "100646ec1fc805b05de3df8c7d22dda9850eab9d",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/af751d33d0dab6f257e7dc97f75cd371a3466562",
+                "reference": "af751d33d0dab6f257e7dc97f75cd371a3466562",
                 "shasum": ""
             },
             "require": {
@@ -373,7 +373,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-07-06T12:49:56+00:00"
+            "time": "2023-07-17T09:22:32+00:00"
         },
         {
             "name": "yiisoft/yii2",

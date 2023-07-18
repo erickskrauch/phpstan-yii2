@@ -8,7 +8,6 @@ use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
-use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\Constant\ConstantBooleanType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
@@ -47,15 +46,14 @@ final class ActiveQueryBuilderReturnTypeExtension implements DynamicMethodReturn
 
         $methodName = $methodReflection->getName();
         if ($methodName === 'asArray') {
-            $argType = isset($methodCall->args[0]) && $methodCall->args[0] instanceof Arg ? $scope->getType($methodCall->args[0]->value) : new ConstantBooleanType(true);
-            if (!$argType instanceof ConstantBooleanType) {
-                throw new ShouldNotHappenException(sprintf('Invalid argument provided to asArray method at line %d', $methodCall->getLine()));
-            }
+            $argType = isset($methodCall->args[0]) && $methodCall->args[0] instanceof Arg
+                ? $scope->getType($methodCall->args[0]->value)
+                : new ConstantBooleanType(true);
 
             return new ActiveQueryObjectType(
                 $calledOnType->getModel(),
                 $calledOnType->getClassName(),
-                $argType->getValue(),
+                $argType->isTrue()->yes(),
                 $calledOnType->hasIndexBy(),
             );
         }
@@ -67,7 +65,7 @@ final class ActiveQueryBuilderReturnTypeExtension implements DynamicMethodReturn
                 $calledOnType->getModel(),
                 $calledOnType->getClassName(),
                 $calledOnType->isAsArray(),
-                !$argType instanceof NullType,
+                !$argType->isNull()->yes(),
             );
         }
 
