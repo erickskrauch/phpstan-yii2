@@ -1,2 +1,3 @@
 rules:
+  - ErickSkrauch\PHPStan\Yii2\Rule\CreateConfigurableObjectRule
   - ErickSkrauch\PHPStan\Yii2\Rule\CreateObjectRule
