@@ -7,18 +7,25 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Rules\RuleErrorBuilder;
+use PHPStan\Rules\RuleLevelHelper;
 use PHPStan\Type\Constant\ConstantArrayType;
 use PHPStan\Type\Constant\ConstantIntegerType;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\VerbosityLevel;
 
-final class YiiConfig {
+final class YiiConfigHelper {
+
+    private RuleLevelHelper $ruleLevelHelper;
+
+    public function __construct(RuleLevelHelper $ruleLevelHelper) {
+        $this->ruleLevelHelper = $ruleLevelHelper;
+    }
 
     /**
      * @param ConstantArrayType $config
      * @return string|\PHPStan\Rules\IdentifierRuleError
      */
-    public static function findClass(ConstantArrayType $config) {
+    public function findClass(ConstantArrayType $config) {
         $class = $config->getOffsetValueType(new ConstantStringType('__class'));
         if (count($class->getConstantStrings()) === 1) {
             return $class->getConstantStrings()[0]->getValue();
@@ -37,7 +44,7 @@ final class YiiConfig {
     /**
      * @phpstan-return list<\PHPStan\Rules\IdentifierRuleError>
      */
-    public static function validateArray(ClassReflection $classReflection, ConstantArrayType $config, Scope $scope): array {
+    public function validateArray(ClassReflection $classReflection, ConstantArrayType $config, Scope $scope): array {
         $errors = [];
         /** @var ConstantIntegerType|ConstantStringType $key */
         foreach ($config->getKeyTypes() as $i => $key) {
@@ -115,8 +122,8 @@ final class YiiConfig {
             }
 
             $target = $property->getWritableType();
-            $result = $target->acceptsWithReason($value, true);
-            if (!$result->yes()) {
+            $result = $this->ruleLevelHelper->acceptsWithReason($target, $value, $scope->isDeclareStrictTypes());
+            if (!$result->result) {
                 $level = VerbosityLevel::getRecommendedLevelByType($target, $value);
                 $errors[] = RuleErrorBuilder::message(sprintf(
                     'Property %s::$%s (%s) does not accept %s.',
@@ -137,7 +144,7 @@ final class YiiConfig {
     /**
      * @phpstan-return list<\PHPStan\Rules\IdentifierRuleError>
      */
-    public static function validateConstructorArgs(ClassReflection $classReflection, ConstantArrayType $config, Scope $scope): array {
+    public function validateConstructorArgs(ClassReflection $classReflection, ConstantArrayType $config, Scope $scope): array {
         $constructorParams = ParametersAcceptorSelector::selectSingle($classReflection->getConstructor()->getVariants())->getParameters();
         /** @var \PHPStan\Type\Type|null $firstKeyType */
         $firstKeyType = null;
@@ -194,11 +201,12 @@ final class YiiConfig {
                 }
             }
 
+            /** @var \PHPStan\Reflection\ParameterReflection $paramReflection */
             // TODO: prevent direct pass of 'config' param to constructor args (\yii\base\Configurable)
 
             $paramType = $paramReflection->getType();
-            $result = $paramType->acceptsWithReason($value, true);
-            if (!$result->yes()) {
+            $result = $this->ruleLevelHelper->acceptsWithReason($paramType, $value, $scope->isDeclareStrictTypes());
+            if (!$result->result) {
                 $level = VerbosityLevel::getRecommendedLevelByType($paramType, $value);
                 $errors[] = RuleErrorBuilder::message(sprintf(
                     'Parameter #%d %s of class %s constructor expects %s, %s given.',

@@ -15,5 +15,6 @@ parameters:
   yii2:
     config_path: tests/assets/yii-config-valid.php
   ignoreErrors:
+    - '#Calling PHPStan\\Rules\\RuleLevelHelper::acceptsWithReason\(\) is not covered.+#'
     - '#Calling PHPStan\\Reflection\\Annotations\\AnnotationsPropertiesClassReflectionExtension\:\:(has|get)Property\(\) is not covered.+#'
     - '#Creating new PHPStan\\Reflection\\Dummy\\DummyPropertyReflection is not covered.+#'

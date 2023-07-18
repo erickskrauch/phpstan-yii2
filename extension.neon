@@ -44,6 +44,8 @@ parametersSchema:
   ])
 
 services:
+  - class: ErickSkrauch\PHPStan\Yii2\Rule\YiiConfigHelper
+
   - class: ErickSkrauch\PHPStan\Yii2\Reflection\ApplicationPropertiesClassReflectionExtension
     tags: [phpstan.broker.propertiesClassReflectionExtension]
 

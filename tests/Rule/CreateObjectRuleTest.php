@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace ErickSkrauch\PHPStan\Yii2\Tests\Rule;
 
 use ErickSkrauch\PHPStan\Yii2\Rule\CreateObjectRule;
+use ErickSkrauch\PHPStan\Yii2\Rule\YiiConfigHelper;
 use ErickSkrauch\PHPStan\Yii2\Tests\ConfigTrait;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
@@ -53,7 +54,10 @@ final class CreateObjectRuleTest extends RuleTestCase {
     }
 
     protected function getRule(): Rule {
-        return new CreateObjectRule(self::createReflectionProvider());
+        return new CreateObjectRule(
+            self::createReflectionProvider(),
+            self::getContainer()->getByType(YiiConfigHelper::class),
+        );
     }
 
 }

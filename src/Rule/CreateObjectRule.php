@@ -19,8 +19,11 @@ final class CreateObjectRule implements Rule {
 
     private ReflectionProvider $reflectionProvider;
 
-    public function __construct(ReflectionProvider $reflectionProvider) {
+    private YiiConfigHelper $configHelper;
+
+    public function __construct(ReflectionProvider $reflectionProvider, YiiConfigHelper $configHelper) {
         $this->reflectionProvider = $reflectionProvider;
+        $this->configHelper = $configHelper;
     }
 
     public function getNodeType(): string {
@@ -60,7 +63,7 @@ final class CreateObjectRule implements Rule {
         if ($firstArgType->isConstantArray()->yes()) {
             /** @var \PHPStan\Type\Constant\ConstantArrayType $config */
             $config = $firstArgType->getConstantArrays()[0];
-            $classNameOrError = YiiConfig::findClass($config);
+            $classNameOrError = $this->configHelper->findClass($config);
             if ($classNameOrError instanceof RuleError) {
                 return [$classNameOrError];
             }
@@ -76,7 +79,7 @@ final class CreateObjectRule implements Rule {
 
             $classReflection = $this->reflectionProvider->getClass($classNameOrError);
 
-            $errors = array_merge($errors, YiiConfig::validateArray($classReflection, $config, $scope));
+            $errors = array_merge($errors, $this->configHelper->validateArray($classReflection, $config, $scope));
         } elseif ($firstArgType->isClassStringType()->yes()) {
             $classNamesTypes = $firstArgType->getConstantStrings();
             // At this moment I'll skip supporting of multiple classes at once
@@ -107,7 +110,7 @@ final class CreateObjectRule implements Rule {
             $secondArgConstantArrays = $scope->getType($args[1]->value)->getConstantArrays();
             if (count($secondArgConstantArrays) === 1) {
                 $argsConfig = $secondArgConstantArrays[0];
-                $errors = array_merge($errors, YiiConfig::validateConstructorArgs($classReflection, $argsConfig, $scope));
+                $errors = array_merge($errors, $this->configHelper->validateConstructorArgs($classReflection, $argsConfig, $scope));
             }
         }
 
