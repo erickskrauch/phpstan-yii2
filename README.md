@@ -10,7 +10,8 @@ An extension for [PHPStan](https://phpstan.org) providing types support and rule
 ## What does it do?
 
 * Provides stub files for better analysis of array shapes.
-* Provide array shape analyse for `Yii:createObject()`. 
+* Provide array shape analyse for `Yii:createObject()`.
+* Provide analyse for the last array argument of the `yii\base\Configurable` class constructor.
 * Mark `YII_*` constants as dynamic.
 * Significantly improves support for `ActiveRecord` and `ActiveQuery`.
 * Provides correct return type for `Yii::$container->get('service_id')` method.
