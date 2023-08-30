@@ -12,6 +12,7 @@ use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
+use PHPStan\Type\TypeCombinator;
 use yii\db\ActiveQuery;
 use yii\db\BaseActiveRecord;
 
@@ -57,17 +58,19 @@ final class ActiveRecordRelationGetterReturnTypeExtension implements DynamicMeth
         }
 
         $arType = $returnType->getTemplateType(ActiveQuery::class, 'T');
-        // @phpstan-ignore-next-line I have no idea how to correctly obtain ObjectType type
-        if (!$arType instanceof ObjectType) {
+        if (!$arType->isObject()->yes()) {
             throw new ShouldNotHappenException(sprintf('Unexpected type %s during method call %s at line %d', get_class($arType), $methodReflection->getName(), $methodCall->getLine()));
         }
 
         $types = [];
-        foreach ($returnType->getObjectClassNames() as $className) {
-            $types[] = new ActiveQueryObjectType($arType, $className);
+        foreach ($arType->getObjectClassNames() as $arClassName) {
+            foreach ($returnType->getObjectClassNames() as $className) {
+                // TODO: allow to receive union type inside ActiveQueryObjectType
+                $types[] = new ActiveQueryObjectType(new ObjectType($arClassName), $className);
+            }
         }
 
-        return \PHPStan\Type\TypeCombinator::union(...$types);
+        return TypeCombinator::union(...$types);
     }
 
 }
