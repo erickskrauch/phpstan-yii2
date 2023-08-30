@@ -13,7 +13,6 @@ use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 use PHPStan\Type\NeverType;
-use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use yii\db\ActiveRecordInterface;
@@ -69,7 +68,7 @@ final class ActiveRecordFindReturnTypeExtension implements DynamicStaticMethodRe
 
         $types = [];
         foreach ($returnType->getObjectClassNames() as $className) {
-            $types[] = new ActiveQueryObjectType(new ObjectType($modelClass), $className);
+            $types[] = new ActiveQueryObjectType(new ActiveRecordObjectType($modelClass), $className);
         }
 
         return TypeCombinator::union(...$types);

@@ -10,7 +10,6 @@ use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
-use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use yii\db\ActiveQuery;
@@ -65,8 +64,7 @@ final class ActiveRecordRelationGetterReturnTypeExtension implements DynamicMeth
         $types = [];
         foreach ($arType->getObjectClassNames() as $arClassName) {
             foreach ($returnType->getObjectClassNames() as $className) {
-                // TODO: allow to receive union type inside ActiveQueryObjectType
-                $types[] = new ActiveQueryObjectType(new ObjectType($arClassName), $className);
+                $types[] = new ActiveQueryObjectType(new ActiveRecordObjectType($arClassName), $className);
             }
         }
 

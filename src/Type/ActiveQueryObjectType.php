@@ -4,32 +4,31 @@ declare(strict_types=1);
 namespace ErickSkrauch\PHPStan\Yii2\Type;
 
 use PHPStan\Type\Generic\GenericObjectType;
-use PHPStan\Type\ObjectType;
+use PHPStan\Type\Type;
 use yii\db\ActiveQueryInterface;
 
 final class ActiveQueryObjectType extends GenericObjectType {
 
-    private ObjectType $model;
+    private Type $returnType;
 
     private bool $asArray;
 
     private bool $hasIndexBy;
 
     public function __construct(
-        ObjectType $model,
+        Type $returnType,
         string $className = ActiveQueryInterface::class,
         bool $asArray = false,
         bool $hasIndexBy = false
     ) {
-        parent::__construct($className, [$model]);
-
-        $this->model = $model;
+        parent::__construct($className, [$returnType]);
+        $this->returnType = $returnType;
         $this->asArray = $asArray;
         $this->hasIndexBy = $hasIndexBy;
     }
 
-    public function getModel(): ObjectType {
-        return $this->model;
+    public function getReturnType(): Type {
+        return $this->returnType;
     }
 
     public function isAsArray(): bool {

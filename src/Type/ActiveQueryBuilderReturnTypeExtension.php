@@ -51,7 +51,7 @@ final class ActiveQueryBuilderReturnTypeExtension implements DynamicMethodReturn
                 : new ConstantBooleanType(true);
 
             return new ActiveQueryObjectType(
-                $calledOnType->getModel(),
+                $calledOnType->getReturnType(),
                 $calledOnType->getClassName(),
                 $argType->isTrue()->yes(),
                 $calledOnType->hasIndexBy(),
@@ -62,7 +62,7 @@ final class ActiveQueryBuilderReturnTypeExtension implements DynamicMethodReturn
             $argType = $scope->getType($methodCall->getArgs()[0]->value);
 
             return new ActiveQueryObjectType(
-                $calledOnType->getModel(),
+                $calledOnType->getReturnType(),
                 $calledOnType->getClassName(),
                 $calledOnType->isAsArray(),
                 !$argType->isNull()->yes(),
@@ -74,7 +74,7 @@ final class ActiveQueryBuilderReturnTypeExtension implements DynamicMethodReturn
                 new NullType(),
                 $calledOnType->isAsArray()
                     ? new ArrayType(new StringType(), new MixedType())
-                    : new ActiveRecordObjectType($calledOnType->getModel()->getClassName()),
+                    : $calledOnType->getReturnType(),
             );
         }
 
@@ -83,7 +83,7 @@ final class ActiveQueryBuilderReturnTypeExtension implements DynamicMethodReturn
                 $calledOnType->hasIndexBy() ? new StringType() : new IntegerType(),
                 $calledOnType->isAsArray()
                     ? new ArrayType(new StringType(), new MixedType())
-                    : new ActiveRecordObjectType($calledOnType->getModel()->getClassName()),
+                    : $calledOnType->getReturnType(),
             );
         }
 
@@ -96,7 +96,7 @@ final class ActiveQueryBuilderReturnTypeExtension implements DynamicMethodReturn
                         $calledOnType->hasIndexBy() ? new StringType() : new IntegerType(),
                         $calledOnType->isAsArray()
                             ? new ArrayType(new StringType(), new MixedType())
-                            : new ActiveRecordObjectType($calledOnType->getModel()->getClassName()),
+                            : $calledOnType->getReturnType(),
                     ),
                 ],
             );
@@ -109,7 +109,7 @@ final class ActiveQueryBuilderReturnTypeExtension implements DynamicMethodReturn
                     $calledOnType->hasIndexBy() ? new StringType() : new IntegerType(),
                     $calledOnType->isAsArray()
                         ? new ArrayType(new StringType(), new MixedType())
-                        : new ActiveRecordObjectType($calledOnType->getModel()->getClassName()),
+                        : $calledOnType->getReturnType(),
                 ],
             );
         }

@@ -11,7 +11,6 @@ use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
-use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use yii\db\BaseActiveRecord;
@@ -51,9 +50,8 @@ final class ActiveRecordRelationReturnTypeExtension implements DynamicMethodRetu
                 throw new ShouldNotHappenException(sprintf('Return type of %s::%s must be an object', $class->getName(), $methodReflection->getName()));
             }
 
-            $classNames = $type->getObjectClassNames();
-            foreach ($classNames as $className) {
-                $types[] = new ActiveQueryObjectType(new ObjectType($class->getName()), $className);
+            foreach ($type->getObjectClassNames() as $className) {
+                $types[] = new ActiveQueryObjectType(new ActiveRecordObjectType($class->getName()), $className);
             }
         }
 
