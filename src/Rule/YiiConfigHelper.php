@@ -22,18 +22,18 @@ final class YiiConfigHelper {
     }
 
     /**
-     * @param ConstantArrayType $config
-     * @return string|\PHPStan\Rules\IdentifierRuleError
+     * @phpstan-return non-empty-list<string>|\PHPStan\Rules\IdentifierRuleError
+     * @return string[]|\PHPStan\Rules\IdentifierRuleError
      */
-    public function findClass(ConstantArrayType $config) {
-        $class = $config->getOffsetValueType(new ConstantStringType('__class'));
-        if (count($class->getConstantStrings()) === 1) {
-            return $class->getConstantStrings()[0]->getValue();
-        }
+    public function findClasses(ConstantArrayType $config) {
+        foreach (['__class', 'class'] as $classKey) {
+            $class = $config->getOffsetValueType(new ConstantStringType($classKey));
+            $constantStrings = $class->getConstantStrings();
+            if (empty($constantStrings)) {
+                continue;
+            }
 
-        $class = $config->getOffsetValueType(new ConstantStringType('class'));
-        if (count($class->getConstantStrings()) === 1) {
-            return $class->getConstantStrings()[0]->getValue();
+            return array_map(fn($string) => $string->getValue(), $constantStrings);
         }
 
         return RuleErrorBuilder::message('Configuration params array must have "class" or "__class" key')
@@ -76,7 +76,7 @@ final class YiiConfigHelper {
                     continue;
                 }
 
-                $errors = array_merge($errors, self::validateConstructorArgs($classReflection, $value->getConstantArrays()[0], $scope));
+                $errors = array_merge($errors, $this->validateConstructorArgs($classReflection, $value->getConstantArrays()[0], $scope));
                 continue;
             }
 

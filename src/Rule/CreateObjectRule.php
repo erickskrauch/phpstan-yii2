@@ -63,21 +63,28 @@ final class CreateObjectRule implements Rule {
         if ($firstArgType->isConstantArray()->yes()) {
             /** @var \PHPStan\Type\Constant\ConstantArrayType $config */
             $config = $firstArgType->getConstantArrays()[0];
-            $classNameOrError = $this->configHelper->findClass($config);
-            if ($classNameOrError instanceof RuleError) {
-                return [$classNameOrError];
+            $classNamesOrError = $this->configHelper->findClasses($config);
+            if ($classNamesOrError instanceof RuleError) {
+                return [$classNamesOrError];
             }
 
-            if (!$this->reflectionProvider->hasClass($classNameOrError)) {
+            // At this moment I'll skip supporting of multiple classes at once
+            if (count($classNamesOrError) > 1) {
+                return [];
+            }
+
+            [$className] = $classNamesOrError;
+
+            if (!$this->reflectionProvider->hasClass($className)) {
                 return [
-                    RuleErrorBuilder::message(sprintf('Class %s not found.', $classNameOrError))
+                    RuleErrorBuilder::message(sprintf('Class %s not found.', $className))
                         ->identifier('class.notFound')
                         ->discoveringSymbolsTip()
                         ->build(),
                 ];
             }
 
-            $classReflection = $this->reflectionProvider->getClass($classNameOrError);
+            $classReflection = $this->reflectionProvider->getClass($className);
 
             $errors = array_merge($errors, $this->configHelper->validateArray($classReflection, $config, $scope));
         } elseif ($firstArgType->isClassStringType()->yes()) {

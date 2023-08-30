@@ -19,6 +19,7 @@ final class CreateObjectRuleTest extends RuleTestCase {
         $this->analyse([__DIR__ . '/_data/create_object_function_arg.php'], []);
         $this->analyse([__DIR__ . '/_data/create_object_classname_valid.php'], []);
         $this->analyse([__DIR__ . '/_data/create_object_array_valid.php'], []);
+        $this->analyse([__DIR__ . '/_data/create_object_array_union_type.php'], []);
         $this->analyse([__DIR__ . '/_data/create_object_classname_invalid.php'], [
             ['Parameter #1 stringArg of class ErickSkrauch\PHPStan\Yii2\Tests\Yii\MyComponent constructor expects string, int given.', 6],
             ['Parameter #2 intArg of class ErickSkrauch\PHPStan\Yii2\Tests\Yii\MyComponent constructor expects int, string given.', 6],
