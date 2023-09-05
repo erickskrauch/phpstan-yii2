@@ -9,6 +9,7 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
+use PHPStan\Type\ObjectType;
 use yii\base\Configurable;
 
 /**
@@ -77,10 +78,11 @@ final class CreateConfigurableObjectRule implements Rule {
             return [];
         }
 
+        $objectType = new ObjectType($className);
         $configArgType = $scope->getType($configArg->value);
         $errors = [];
         foreach ($configArgType->getConstantArrays() as $constantArray) {
-            $errors = array_merge($errors, $this->configHelper->validateArray($class, $constantArray, $scope));
+            $errors = array_merge($errors, $this->configHelper->validateArray($objectType, $constantArray, $scope));
         }
 
         return $errors;

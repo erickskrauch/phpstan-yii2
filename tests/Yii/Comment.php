@@ -9,6 +9,7 @@ use yii\db\ActiveRecord;
 /**
  * @property int    $id
  * @property int    $article_id
+ * @property string $text
  * @property string $field
  */
 final class Comment extends ActiveRecord {

@@ -3,37 +3,49 @@ declare(strict_types=1);
 
 namespace ErickSkrauch\PHPStan\Yii2\Rule;
 
+use ErickSkrauch\PHPStan\Yii2\Helper\RuleHelper;
+use PhpParser\Node;
+use PhpParser\Node\Expr;
 use PHPStan\Analyser\Scope;
-use PHPStan\Reflection\ClassReflection;
-use PHPStan\Reflection\ParametersAcceptorSelector;
+use PHPStan\Internal\SprintfHelper;
+use PHPStan\Node\Expr\TypeExpr;
+use PHPStan\Rules\Classes\InstantiationRule;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Rules\RuleLevelHelper;
 use PHPStan\Type\Constant\ConstantArrayType;
 use PHPStan\Type\Constant\ConstantIntegerType;
 use PHPStan\Type\Constant\ConstantStringType;
+use PHPStan\Type\ErrorType;
+use PHPStan\Type\Type;
+use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\VerbosityLevel;
 
 final class YiiConfigHelper {
 
     private RuleLevelHelper $ruleLevelHelper;
 
-    public function __construct(RuleLevelHelper $ruleLevelHelper) {
+    private InstantiationRule $instantiationRule;
+
+    public function __construct(
+        RuleLevelHelper $ruleLevelHelper,
+        InstantiationRule $instantiationRule
+    ) {
         $this->ruleLevelHelper = $ruleLevelHelper;
+        $this->instantiationRule = $instantiationRule;
     }
 
     /**
-     * @phpstan-return non-empty-list<string>|\PHPStan\Rules\IdentifierRuleError
-     * @return string[]|\PHPStan\Rules\IdentifierRuleError
+     * @return Type|\PHPStan\Rules\IdentifierRuleError
      */
-    public function findClasses(ConstantArrayType $config) {
+    public function findObjectType(ConstantArrayType $config) {
         foreach (['__class', 'class'] as $classKey) {
-            $class = $config->getOffsetValueType(new ConstantStringType($classKey));
-            $constantStrings = $class->getConstantStrings();
-            if (empty($constantStrings)) {
+            $classType = $config->getOffsetValueType(new ConstantStringType($classKey));
+            // This condition will also filter our invalid type, which should be already reported by PHPStan itself
+            if (!$classType->isClassStringType()->yes()) {
                 continue;
             }
 
-            return array_map(fn($string) => $string->getValue(), $constantStrings);
+            return $classType->getClassStringObjectType();
         }
 
         return RuleErrorBuilder::message('Configuration params array must have "class" or "__class" key')
@@ -44,11 +56,11 @@ final class YiiConfigHelper {
     /**
      * @phpstan-return list<\PHPStan\Rules\IdentifierRuleError>
      */
-    public function validateArray(ClassReflection $classReflection, ConstantArrayType $config, Scope $scope): array {
+    public function validateArray(Type $object, ConstantArrayType $config, Scope $scope): array {
         $errors = [];
         /** @var ConstantIntegerType|ConstantStringType $key */
         foreach ($config->getKeyTypes() as $i => $key) {
-            /** @var \PHPStan\Type\Type $value */
+            /** @var Type $value */
             $value = $config->getValueTypes()[$i];
             // @phpstan-ignore-next-line according to getKeyType() typing it is only possible to have those or ConstantIntType
             if (!$key instanceof ConstantStringType) {
@@ -76,7 +88,7 @@ final class YiiConfigHelper {
                     continue;
                 }
 
-                $errors = array_merge($errors, $this->validateConstructorArgs($classReflection, $value->getConstantArrays()[0], $scope));
+                $errors = array_merge($errors, $this->validateConstructorArgs($object, $value->getConstantArrays()[0], $scope));
                 continue;
             }
 
@@ -86,10 +98,21 @@ final class YiiConfigHelper {
                 continue;
             }
 
-            if (!$classReflection->hasProperty($propertyName)) {
+            $typeResult = $this->ruleLevelHelper->findTypeToCheck(
+                $scope,
+                new TypeExpr($object), // @phpstan-ignore-line @ondrejmirtes said that I can use that method
+                sprintf('Access to property $%s on an unknown class %%s.', SprintfHelper::escapeFormatString($propertyName)), // @phpstan-ignore-line @ondrejmirtes said that I can use that method
+                static fn(Type $type): bool => $type->canAccessProperties()->yes() && $type->hasProperty($propertyName)->yes(),
+            );
+            $objectType = $typeResult->getType();
+            if ($objectType instanceof ErrorType) {
+                return $typeResult->getUnknownClassErrors();
+            }
+
+            if (!$objectType->canAccessProperties()->yes() || !$objectType->hasProperty($propertyName)->yes()) {
                 $errors[] = RuleErrorBuilder::message(sprintf(
                     "The config for %s is wrong: the property %s doesn't exists",
-                    $classReflection->getName(),
+                    $objectType->describe(VerbosityLevel::typeOnly()),
                     $propertyName,
                 ))
                     ->identifier('property.notFound')
@@ -97,7 +120,7 @@ final class YiiConfigHelper {
                 continue;
             }
 
-            $property = $classReflection->getProperty($propertyName, $scope);
+            $property = $objectType->getProperty($propertyName, $scope);
             if (!$property->isPublic()) {
                 $errors[] = RuleErrorBuilder::message(sprintf(
                     'Access to %s property %s::$%s.',
@@ -144,14 +167,14 @@ final class YiiConfigHelper {
     /**
      * @phpstan-return list<\PHPStan\Rules\IdentifierRuleError>
      */
-    public function validateConstructorArgs(ClassReflection $classReflection, ConstantArrayType $config, Scope $scope): array {
-        $constructorParams = ParametersAcceptorSelector::selectSingle($classReflection->getConstructor()->getVariants())->getParameters();
-        /** @var \PHPStan\Type\Type|null $firstKeyType */
-        $firstKeyType = null;
+    public function validateConstructorArgs(Type $object, ConstantArrayType $config, Scope $scope): array {
         $errors = [];
-        /** @var ConstantIntegerType|ConstantStringType $key */
+        /** @var \PhpParser\Node\Arg[] $args */
+        $args = [];
+        /** @var Type|null $firstKeyType */
+        $firstKeyType = null;
         foreach ($config->getKeyTypes() as $i => $key) {
-            /** @var \PHPStan\Type\Type $value */
+            /** @var Type $value */
             $value = $config->getValueTypes()[$i];
 
             if ($firstKeyType === null) {
@@ -164,65 +187,31 @@ final class YiiConfigHelper {
             }
 
             if ($key instanceof ConstantIntegerType) {
-                if (!isset($constructorParams[$key->getValue()])) {
-                    $errors[] = RuleErrorBuilder::message(sprintf(
-                        'Unknown parameter #%d in call to %s constructor.',
-                        $key->getValue() + 1,
-                        $classReflection->getName(),
-                    ))
-                        ->identifier('argument.unknown')
-                        ->build();
-                    continue;
-                }
-
-                $paramIndex = $key->getValue();
-                $paramReflection = $constructorParams[$paramIndex];
+                // @phpstan-ignore-next-line I know about backward compatibility promise
+                $args[] = new Node\Arg(new TypeExpr($value));
             } else {
-                $paramReflection = null;
-                $paramIndex = null;
-                foreach ($constructorParams as $j => $constructorParam) {
-                    if ($constructorParam->getName() === $key->getValue()) {
-                        $paramReflection = $constructorParam;
-                        $paramIndex = $j;
-                        break;
-                    }
-                }
-
-                if ($paramReflection === null) {
-                    $errors[] = RuleErrorBuilder::message(sprintf(
-                        'Unknown parameter $%s in call to %s constructor.',
-                        $key->getValue(),
-                        $classReflection->getName(),
-                    ))
-                        ->identifier('argument.unknown')
-                        ->build();
-
-                    continue;
-                }
-            }
-
-            /** @var \PHPStan\Reflection\ParameterReflection $paramReflection */
-            // TODO: prevent direct pass of 'config' param to constructor args (\yii\base\Configurable)
-
-            $paramType = $paramReflection->getType();
-            $result = $this->ruleLevelHelper->acceptsWithReason($paramType, $value, $scope->isDeclareStrictTypes());
-            if (!$result->result) {
-                $level = VerbosityLevel::getRecommendedLevelByType($paramType, $value);
-                $errors[] = RuleErrorBuilder::message(sprintf(
-                    'Parameter #%d %s of class %s constructor expects %s, %s given.',
-                    $paramIndex + 1,
-                    $paramReflection->getName(),
-                    $classReflection->getName(),
-                    $paramType->describe($level),
-                    $value->describe($level),
-                ))
-                    ->identifier('argument.type')
-                    ->acceptsReasonsTip($result->reasons)
-                    ->build();
+                // @phpstan-ignore-next-line I know about backward compatibility promise
+                $args[] = new Node\Arg(new TypeExpr($value), false, false, [], new Node\Identifier($key->getValue()));
             }
         }
 
-        return $errors;
+        if (!empty($errors)) {
+            return $errors;
+        }
+
+        $classNamesTypes = [];
+        foreach ($object->getObjectClassNames() as $className) {
+            $classNamesTypes[] = new ConstantStringType($className, true);
+        }
+
+        // @phpstan-ignore-next-line I know about backward compatibility promise
+        $newNode = new Expr\New_(new TypeExpr(TypeCombinator::union(...$classNamesTypes)), $args);
+
+        // @phpstan-ignore-next-line I know about backward compatibility promise
+        $errors = $this->instantiationRule->processNode($newNode, $scope);
+
+        // @phpstan-ignore-next-line it does return the correct type, but some internal PHPStan's magic fails here
+        return array_map([RuleHelper::class, 'removeLine'], $errors);
     }
 
 }
