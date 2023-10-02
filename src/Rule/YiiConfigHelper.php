@@ -186,21 +186,24 @@ final class YiiConfigHelper {
 
             /** @var list<\PHPStan\Rules\IdentifierRuleError> $paramSearchErrors */
             $paramSearchErrors = [];
-            /** @var \PHPStan\Reflection\ParameterReflection[] $foundParams */
+            /** @var list<array{class-string, \PHPStan\Reflection\ParameterReflection, string}> $foundParams */
             $foundParams = [];
             /** @var \PHPStan\Reflection\ClassReflection $classReflection */
             foreach ($object->getObjectClassReflections() as $classReflection) {
                 $constructorParams = ParametersAcceptorSelector::selectSingle($classReflection->getConstructor()->getVariants())->getParameters();
                 $param = null;
+                $paramIndex = 0;
 
                 // TODO: prevent direct pass of 'config' param to constructor args (\yii\base\Configurable)
 
                 if (is_int($paramName)) {
                     $param = $constructorParams[$paramName] ?? null;
+                    $paramIndex = $paramName;
                 } else {
-                    foreach ($constructorParams as $constructorParam) {
+                    foreach ($constructorParams as $j => $constructorParam) {
                         if ($constructorParam->getName() === $paramName) {
                             $param = $constructorParam;
+                            $paramIndex = $j;
                             break;
                         }
                     }
@@ -217,7 +220,7 @@ final class YiiConfigHelper {
                     continue;
                 }
 
-                $foundParams[$classReflection->getName()] = $param;
+                $foundParams[] = [$classReflection->getName(), $param, sprintf('#%s $%s', $paramIndex + 1, $param->getName())];
             }
 
             if (empty($foundParams)) {
@@ -239,15 +242,14 @@ final class YiiConfigHelper {
             /** @var list<\PHPStan\Rules\IdentifierRuleError> $typeCheckErrors */
             $typeCheckErrors = [];
             $accepted = false;
-            foreach ($foundParams as $className => $constructorParam) {
-                // TODO: expose param name
+            foreach ($foundParams as [$className, $constructorParam, $strToReport]) {
                 $paramType = $constructorParam->getType();
                 $result = $this->ruleLevelHelper->acceptsWithReason($paramType, $paramValue, $scope->isDeclareStrictTypes());
                 if (!$result->result) {
                     $level = VerbosityLevel::getRecommendedLevelByType($paramType, $paramValue);
                     $typeCheckErrors[] = RuleErrorBuilder::message(sprintf(
                         'Parameter %s of class %s constructor expects %s, %s given.',
-                        $paramStrToReport,
+                        $strToReport,
                         $className,
                         $paramType->describe($level),
                         $paramValue->describe($level),
