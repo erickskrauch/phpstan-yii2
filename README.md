@@ -36,6 +36,7 @@ If you also install [phpstan/extension-installer](https://github.com/phpstan/ext
   ```
   includes:
     - vendor/erickskrauch/phpstan-yii2/extension.neon
+    - vendor/erickskrauch/phpstan-yii2/rules.neon
   ```
 </details>
 
