@@ -45,6 +45,8 @@ parametersSchema:
 
 services:
   - class: ErickSkrauch\PHPStan\Yii2\Rule\YiiConfigHelper
+    arguments:
+      reportMaybes: %reportMaybes%
 
   - class: ErickSkrauch\PHPStan\Yii2\Reflection\ApplicationPropertiesClassReflectionExtension
     tags: [phpstan.broker.propertiesClassReflectionExtension]
