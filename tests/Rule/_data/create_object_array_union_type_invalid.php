@@ -15,3 +15,9 @@ foreach ([Article::class, Comment::class] as $className) {
 
 $className = random_int(0, 1) ? MyComponent::class : BarComponent::class;
 Yii::createObject($className, ['string']);
+Yii::createObject([
+    'class' => $className,
+    '__construct()' => [
+        'stringArg' => 'string',
+    ],
+]);

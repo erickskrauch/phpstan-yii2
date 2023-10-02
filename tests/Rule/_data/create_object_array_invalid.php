@@ -13,3 +13,18 @@ Yii::createObject([
     'publicArrayProp' => ['key' => false],
     'privateStringProp' => 712,
 ]);
+
+Yii::createObject([
+    'class' => MyComponent::class,
+    '__construct()' => [
+        'notExists' => 123,
+    ],
+]);
+
+Yii::createObject([
+    'class' => MyComponent::class,
+    '__construct()' => [
+        'stringArg' => 'string',
+        1 => 123,
+    ],
+]);

@@ -36,6 +36,8 @@ final class CreateObjectRuleTest extends RuleTestCase {
                 "Offset 'key' (string) does not accept type false.",
             ],
             ['Property ErickSkrauch\PHPStan\Yii2\Tests\Yii\MyComponent::$privateStringProp (string) does not accept int.', 6],
+            ['Unknown parameter $notExists in call to ErickSkrauch\PHPStan\Yii2\Tests\Yii\MyComponent constructor.', 17],
+            ["Parameters indexed by name and by position in the same array aren't allowed.", 24],
         ]);
         $this->analyse([__DIR__ . '/_data/create_object_array_access_private_properties.php'], [
             ['Access to protected property ErickSkrauch\PHPStan\Yii2\Tests\Yii\MyComponent::$protectedStringProp.', 6],
@@ -55,6 +57,7 @@ final class CreateObjectRuleTest extends RuleTestCase {
         $this->analyse([__DIR__ . '/_data/create_object_array_union_type_invalid.php'], [
             ["The config for ErickSkrauch\PHPStan\Yii2\Tests\Yii\Article|ErickSkrauch\PHPStan\Yii2\Tests\Yii\Comment is wrong: the property field doesn't exists", 10],
             ['Parameter #1 $dateTime of class ErickSkrauch\PHPStan\Yii2\Tests\Yii\BarComponent constructor expects DateTimeInterface, string given.', 17],
+            ['Unknown parameter $stringArg in call to ErickSkrauch\PHPStan\Yii2\Tests\Yii\BarComponent constructor.', 18],
         ]);
     }
 

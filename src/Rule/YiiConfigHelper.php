@@ -224,7 +224,7 @@ final class YiiConfigHelper {
             }
 
             if (empty($foundParams)) {
-                $paramSearchErrors[] = RuleErrorBuilder::message(sprintf(
+                $errors[] = RuleErrorBuilder::message(sprintf(
                     'Unknown parameter %s in call to %s constructor.',
                     $paramStrToReport,
                     $object->describe(VerbosityLevel::typeOnly()),
