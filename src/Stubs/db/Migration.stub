@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace yii\db;
 
+/**
+ * @property-read \yii\db\Connection $db
+ */
 class Migration {
 
     /**
