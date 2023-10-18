@@ -5,4 +5,11 @@ namespace yii\db;
 
 class Connection {
 
+    /**
+     * @template T
+     * @param callable(self $db): T $callback
+     * @return T
+     */
+    public function useMaster(callable $callback) {}
+
 }
