@@ -3,6 +3,10 @@ declare(strict_types=1);
 
 namespace yii\base;
 
+/**
+ * @property-read \yii\base\Request $request
+ * @property-read \yii\base\Response $response
+ */
 class Controller {
 
     /**

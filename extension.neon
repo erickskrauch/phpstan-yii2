@@ -8,6 +8,8 @@ parameters:
     - src/Stubs/base/Controller.stub
     - src/Stubs/base/Event.stub
     - src/Stubs/base/Model.stub
+    - src/Stubs/base/Request.stub
+    - src/Stubs/base/Response.stub
 
     - src/Stubs/data/ActiveDataProvider.stub
     - src/Stubs/data/ArrayDataProvider.stub
