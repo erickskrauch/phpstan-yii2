@@ -3,6 +3,7 @@ parameters:
     config_path: null
   stubFiles:
     - src/Stubs/base/Action.stub
+    - src/Stubs/base/BaseObject.stub
     - src/Stubs/base/Behavior.stub
     - src/Stubs/base/Component.stub
     - src/Stubs/base/Controller.stub
