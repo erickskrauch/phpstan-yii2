@@ -3,12 +3,16 @@ parameters:
     config_path: null
   stubFiles:
     - src/Stubs/base/Action.stub
+    - src/Stubs/base/ActionEvent.stub
     - src/Stubs/base/BaseObject.stub
     - src/Stubs/base/Behavior.stub
     - src/Stubs/base/Component.stub
     - src/Stubs/base/Controller.stub
+    - src/Stubs/base/DynamicModel.stub
     - src/Stubs/base/Event.stub
+    - src/Stubs/base/InlineAction.stub
     - src/Stubs/base/Model.stub
+    - src/Stubs/base/Module.stub
     - src/Stubs/base/Request.stub
     - src/Stubs/base/Response.stub
 
@@ -22,8 +26,13 @@ parameters:
     - src/Stubs/db/ActiveRecord.stub
     - src/Stubs/db/BatchQueryResult.stub
     - src/Stubs/db/ColumnSchemaBuilder.stub
+    - src/Stubs/db/Command.stub
     - src/Stubs/db/Connection.stub
+    - src/Stubs/db/DataReader.stub
+    - src/Stubs/db/Expression.stub
     - src/Stubs/db/Migration.stub
+    - src/Stubs/db/QueryBuilder.stub
+    - src/Stubs/db/SqlTokenizer.stub
 
     - src/Stubs/test/BaseActiveFixture.stub
     - src/Stubs/test/Fixture.stub
@@ -31,7 +40,10 @@ parameters:
     - src/Stubs/validators/InlineValidator.stub
     - src/Stubs/validators/Validator.stub
 
+    - src/Stubs/web/Cookie.stub
+    - src/Stubs/web/CookieCollection.stub
     - src/Stubs/web/HeaderCollection.stub
+    - src/Stubs/web/JsExpression.stub
 
     - src/Stubs/BaseYii.stub
   dynamicConstantNames:
