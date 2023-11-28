@@ -1,17 +1,16 @@
 <?php
 declare(strict_types=1);
 
-namespace yii\base;
+namespace yii\db;
 
-class Action {
+abstract class SqlTokenizer {
 
     /**
      * TODO: remove when https://github.com/phpstan/phpstan/issues/10198 will be fixed
      *
-     * @param string $id
-     * @param \yii\base\Controller $controller
+     * @param string $sql
      * @param array<string, mixed> $config
      */
-    public function __construct($id, $controller, $config = []) {}
+    public function __construct($sql, $config = []) {}
 
 }

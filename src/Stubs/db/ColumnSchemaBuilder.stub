@@ -5,4 +5,14 @@ namespace yii\db;
 
 class ColumnSchemaBuilder {
 
+    /**
+     * TODO: remove when https://github.com/phpstan/phpstan/issues/10198 will be fixed
+     *
+     * @param string $type
+     * @param int|string|list<string|int>|null $length
+     * @param \yii\db\Connection|null $db
+     * @param array<string, mixed> $config
+     */
+    public function __construct($type, $length = null, $db = null, $config = []) {}
+
 }

@@ -10,6 +10,15 @@ namespace yii\base;
 class Controller {
 
     /**
+     * TODO: remove when https://github.com/phpstan/phpstan/issues/10198 will be fixed
+     *
+     * @param string $id
+     * @param \yii\base\Module $module
+     * @param array<string, mixed> $config
+     */
+    public function __construct($id, $module, $config = []) {}
+
+    /**
      * @return array<string, class-string<Action>|array{class: class-string<Action>}|array{__class: class-string<Action>}|callable(): Action>
      */
     public function actions() {}
