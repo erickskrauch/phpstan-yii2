@@ -18,6 +18,14 @@ final class Comment extends ActiveRecord {
         return new CommentsQuery(self::class);
     }
 
+    /**
+     * @param string $sql
+     * @param array<string, mixed> $params
+     */
+    public static function findBySql($sql, $params = []): CommentsQuery {
+        return new CommentsQuery(self::class);
+    }
+
     public static function findById(string $id): ?self {
         return self::find()->notDeletedSelf()->notDeletedStatic()->notDeletedStatic()->limit(1)->one();
     }

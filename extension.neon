@@ -93,6 +93,9 @@ services:
   - class: ErickSkrauch\PHPStan\Yii2\Type\ActiveRecordFindReturnTypeExtension
     tags: [phpstan.broker.dynamicStaticMethodReturnTypeExtension]
 
+  - class: ErickSkrauch\PHPStan\Yii2\Type\ActiveRecordFindBySqlReturnTypeExtension
+    tags: [phpstan.broker.dynamicStaticMethodReturnTypeExtension]
+
   - class: ErickSkrauch\PHPStan\Yii2\Type\ActiveRecordRelationGetterReturnTypeExtension
     tags: [phpstan.broker.dynamicMethodReturnTypeExtension]
 

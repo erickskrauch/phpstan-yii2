@@ -8,9 +8,15 @@ use function PHPStan\Testing\assertType;
 assertType('bool', isset(Article::find()->one()['id']));
 assertType('bool', isset(Article::find()->one()['text']));
 
+assertType('bool', isset(Article::findBySql('')->one()['id']));
+assertType('bool', isset(Article::findBySql('')->one()['text']));
+
 // Read
 assertType('int', Article::find()->one()['id']);
 assertType('string', Article::find()->one()['text']);
+
+assertType('int', Article::findBySql('')->one()['id']);
+assertType('string', Article::findBySql('')->one()['text']);
 
 // Write
 $article = Article::find()->one();
