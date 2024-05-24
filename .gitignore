@@ -3,4 +3,3 @@
 /.phpunit.result.cache
 /phpunit.xml
 /phpstan.neon
-/.idea
