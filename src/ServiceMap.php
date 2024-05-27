@@ -85,7 +85,7 @@ final class ServiceMap {
         if ($node instanceof String_) {
             $service = $node->value;
         } elseif ($node instanceof ClassConstFetch && $node->class instanceof Name) {
-            $service = $node->class->getFirst();
+            $service = $node->class->toString();
         } else {
             return null;
         }
