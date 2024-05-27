@@ -7,22 +7,14 @@ use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 /**
- * @property int    $id
- * @property int    $article_id
+ * @property int $id
+ * @property int $article_id
  * @property string $text
  * @property string $field
  */
 final class Comment extends ActiveRecord {
 
     public static function find(): CommentsQuery {
-        return new CommentsQuery(self::class);
-    }
-
-    /**
-     * @param string $sql
-     * @param array<string, mixed> $params
-     */
-    public static function findBySql($sql, $params = []): CommentsQuery {
         return new CommentsQuery(self::class);
     }
 

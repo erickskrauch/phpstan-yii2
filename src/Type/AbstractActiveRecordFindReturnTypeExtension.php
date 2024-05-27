@@ -62,7 +62,7 @@ abstract class AbstractActiveRecordFindReturnTypeExtension implements DynamicSta
     abstract protected function methodName(): string;
 
     private function createType(string $modelClass, Scope $scope): Type {
-        $method = $this->reflectionProvider->getClass($modelClass)->getMethod(static::methodName(), $scope);
+        $method = $this->reflectionProvider->getClass($modelClass)->getMethod('find', $scope);
         $returnType = ParametersAcceptorSelector::selectSingle($method->getVariants())->getReturnType();
         if (!$returnType->isObject()->yes()) {
             throw new ShouldNotHappenException();
