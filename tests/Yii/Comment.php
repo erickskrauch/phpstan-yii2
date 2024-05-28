@@ -7,8 +7,8 @@ use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 /**
- * @property int $id
- * @property int $article_id
+ * @property int    $id
+ * @property int    $article_id
  * @property string $text
  * @property string $field
  */
