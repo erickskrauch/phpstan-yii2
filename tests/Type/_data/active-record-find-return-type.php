@@ -8,13 +8,23 @@ use yii\db\ActiveQuery;
 use function PHPStan\Testing\assertType;
 
 assertType(ActiveQuery::class . '<' . Article::class . '>', Article::find());
+assertType(ActiveQuery::class . '<' . Article::class . '>', Article::findBySql(''));
 assertType(CommentsQuery::class . '<' . Comment::class . '>', Comment::find());
+assertType(CommentsQuery::class . '<' . Comment::class . '>', Comment::findBySql(''));
 
 $class = Article::class;
 assertType(ActiveQuery::class . '<' . Article::class . '>', $class::find());
+assertType(ActiveQuery::class . '<' . Article::class . '>', $class::findBySql(''));
 
 if (random_int(0, 10) === 0) {
     $class = Comment::class;
 }
 
-assertType(CommentsQuery::class . '<' . Comment::class . '>|' . ActiveQuery::class . '<' . Article::class . '>', $class::find());
+assertType(
+    CommentsQuery::class . '<' . Comment::class . '>|' . ActiveQuery::class . '<' . Article::class . '>',
+    $class::find(),
+);
+assertType(
+    CommentsQuery::class . '<' . Comment::class . '>|' . ActiveQuery::class . '<' . Article::class . '>',
+    $class::findBySql(''),
+);

@@ -15,6 +15,7 @@ use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 use PHPStan\Type\NeverType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
+use yii\db\ActiveRecord;
 use yii\db\ActiveRecordInterface;
 
 /**
@@ -34,13 +35,27 @@ final class ActiveRecordFindReturnTypeExtension implements DynamicStaticMethodRe
     }
 
     public function isStaticMethodSupported(MethodReflection $methodReflection): bool {
-        return $methodReflection->getName() === 'find';
+        return in_array($methodReflection->getName(), ['find', 'findBySql', 'findByCondition'], true);
     }
 
-    public function getTypeFromStaticMethodCall(MethodReflection $methodReflection, StaticCall $methodCall, Scope $scope): ?Type {
+    public function getTypeFromStaticMethodCall(
+        MethodReflection $methodReflection,
+        StaticCall $methodCall,
+        Scope $scope
+    ): ?Type {
         $calledOn = $methodCall->class;
+        $declaringClass = $methodReflection->getDeclaringClass();
+        // The implementations of the ::findBySql() and ::findByCondition() methods rely on the ::find() method,
+        // so unless they have been overridden, we return the ::find() method type
+        if ($methodReflection->getName() !== 'find' && $declaringClass->getName() === ActiveRecord::class) {
+            $findMethod = $declaringClass->getMethod('find', $scope);
+            $findCall = new StaticCall($calledOn, 'find'); // According to the Yii2 implementation, this call will have no arguments
+
+            return $this->getTypeFromStaticMethodCall($findMethod, $findCall, $scope);
+        }
+
         if ($calledOn instanceof Name) {
-            return $this->createType($scope->resolveName($calledOn), $scope);
+            return $this->createType($scope->resolveName($calledOn), $methodReflection->getName(), $scope);
         }
 
         $types = [];
@@ -50,7 +65,7 @@ final class ActiveRecordFindReturnTypeExtension implements DynamicStaticMethodRe
                     return new NeverType();
                 }
 
-                $types[] = $this->createType($constantString->getValue(), $scope);
+                $types[] = $this->createType($constantString->getValue(), $methodReflection->getName(), $scope);
             }
 
             return TypeCombinator::union(...$types);
@@ -59,8 +74,8 @@ final class ActiveRecordFindReturnTypeExtension implements DynamicStaticMethodRe
         return null;
     }
 
-    private function createType(string $modelClass, Scope $scope): Type {
-        $method = $this->reflectionProvider->getClass($modelClass)->getMethod('find', $scope);
+    private function createType(string $modelClass, string $methodName, Scope $scope): Type {
+        $method = $this->reflectionProvider->getClass($modelClass)->getMethod($methodName, $scope);
         $returnType = ParametersAcceptorSelector::selectSingle($method->getVariants())->getReturnType();
         if (!$returnType->isObject()->yes()) {
             throw new ShouldNotHappenException();
