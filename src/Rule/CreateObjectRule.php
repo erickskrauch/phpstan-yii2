@@ -69,7 +69,7 @@ final class CreateObjectRule implements Rule {
 
             $objectType = $objectTypeOrError;
             $errors = $this->configHelper->validateArray($objectTypeOrError, $config, $scope);
-        } elseif ($firstArgType->isClassStringType()->yes()) {
+        } elseif ($firstArgType->isClassString()->yes()) {
             $objectType = $firstArgType->getClassStringObjectType();
         } else {
             // We can't process second argument without knowing the class

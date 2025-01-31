@@ -30,7 +30,7 @@ final class ActiveQueryBuilderReturnTypeExtension implements DynamicMethodReturn
 
     public function isMethodSupported(MethodReflection $methodReflection): bool {
         // This condition is necessary to process the query builder and not to lose the model during its work
-        $type = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
+        $type = ParametersAcceptorSelector::combineAcceptors($methodReflection->getVariants())->getReturnType();
         if ((new ObjectType(ActiveQueryInterface::class))->isSuperTypeOf($type)->yes()) {
             return true;
         }
@@ -41,7 +41,7 @@ final class ActiveQueryBuilderReturnTypeExtension implements DynamicMethodReturn
     public function getTypeFromMethodCall(MethodReflection $methodReflection, MethodCall $methodCall, Scope $scope): Type {
         $calledOnType = $scope->getType($methodCall->var);
         if (!$calledOnType instanceof ActiveQueryObjectType) {
-            return ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
+            return ParametersAcceptorSelector::combineAcceptors($methodReflection->getVariants())->getReturnType();
         }
 
         $methodName = $methodReflection->getName();

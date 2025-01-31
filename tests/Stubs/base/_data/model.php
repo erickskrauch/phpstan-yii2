@@ -8,7 +8,7 @@ $model = new Model();
 
 // getErrors()
 assertType('array<string, array<string>>', $model->getErrors());
-assertType('array<int, string>', $model->getErrors('attribute'));
+assertType('list<string>', $model->getErrors('attribute'));
 
 // getFirstErrors()
 assertType('array<string, string>', $model->getFirstErrors());

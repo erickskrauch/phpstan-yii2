@@ -38,14 +38,14 @@ final class ActiveRecordRelationReturnTypeExtension implements DynamicMethodRetu
         }
 
         $argType = $scope->getType($methodCall->args[0]->value);
-        if (!$argType->isClassStringType()->yes()) {
+        if (!$argType->isClassString()->yes()) {
             throw new ShouldNotHappenException(sprintf('Invalid argument provided to method %s' . PHP_EOL . 'Hint: You should use ::class instead of ::className()', $methodReflection->getName()));
         }
 
         $types = [];
         foreach ($argType->getConstantStrings() as $constantString) {
             $class = $this->reflectionProvider->getClass($constantString->getValue());
-            $type = ParametersAcceptorSelector::selectSingle($class->getMethod('find', $scope)->getVariants())->getReturnType();
+            $type = ParametersAcceptorSelector::combineAcceptors($class->getMethod('find', $scope)->getVariants())->getReturnType();
             if (!$type->isObject()->yes()) {
                 throw new ShouldNotHappenException(sprintf('Return type of %s::%s must be an object', $class->getName(), $methodReflection->getName()));
             }

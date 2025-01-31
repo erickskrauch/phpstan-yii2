@@ -56,7 +56,7 @@ final class BaseObjectPropertyReflection implements PropertyReflection {
             return new NeverType();
         }
 
-        return ParametersAcceptorSelector::selectSingle($this->getter->getVariants())->getReturnType();
+        return ParametersAcceptorSelector::combineAcceptors($this->getter->getVariants())->getReturnType();
     }
 
     public function getWritableType(): Type {
@@ -65,7 +65,7 @@ final class BaseObjectPropertyReflection implements PropertyReflection {
         }
 
         /** @var \PHPStan\Reflection\ParameterReflection[] $params */
-        $params = ParametersAcceptorSelector::selectSingle($this->setter->getVariants())->getParameters();
+        $params = ParametersAcceptorSelector::combineAcceptors($this->setter->getVariants())->getParameters();
         if (!isset($params[0])) {
             throw new ShouldNotHappenException("Getter doesn't accept any arguments");
         }
