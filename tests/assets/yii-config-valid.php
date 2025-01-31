@@ -13,6 +13,7 @@ return [
         'request' => [
             'baseUrl' => '/',
         ],
+        'cache' => 'cache.definition',
     ],
     'container' => [
         'singletons' => [
@@ -34,6 +35,7 @@ return [
                 'flag' => 'foo',
             ],
             Throwable::class => Exception::class,
+            'cache.definition' => yii\caching\ArrayCache::class,
         ],
     ],
 ];

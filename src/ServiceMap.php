@@ -9,13 +9,19 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Name;
 use PhpParser\Node\Scalar\String_;
-use ReflectionException;
 use ReflectionFunction;
 use ReflectionNamedType;
 use RuntimeException;
 
 /**
  * @phpstan-type Yii2Definition object|string|Closure|array{class?: string, __class?: string}
+ * @phpstan-type YII2ContainerConfig array{
+ *     container?: array{
+ *         singletons?: array<string, Yii2Definition>,
+ *         definitions?: array<string, Yii2Definition>,
+ *     },
+ *     components?: array<string, Yii2Definition>,
+ * }
  */
 final class ServiceMap {
 
@@ -46,7 +52,8 @@ final class ServiceMap {
     private array $components = [];
 
     /**
-     * @throws RuntimeException|ReflectionException
+     * @throws \RuntimeException
+     * @throws \ReflectionException
      */
     public function __construct(string $configPath) {
         if (!file_exists($configPath)) {
@@ -58,26 +65,18 @@ final class ServiceMap {
         defined('YII_ENV_PROD') || define('YII_ENV_PROD', false);
         defined('YII_ENV_TEST') || define('YII_ENV_TEST', true);
 
-        /**
-         * @var array{
-         *     container?: array{
-         *         singletons?: array<string, Yii2Definition>,
-         *         definitions?: array<string, Yii2Definition>,
-         *     },
-         *     components?: array<string, Yii2Definition>,
-         * } $config
-         */
+        /** @var YII2ContainerConfig $config */
         $config = require $configPath;
         foreach ($config['container']['singletons'] ?? [] as $id => $definition) {
-            $this->services[$id] = $this->guessDefinition($id, $definition);
+            $this->services[$id] = $this->guessDefinition($id, $definition, $config);
         }
 
         foreach ($config['container']['definitions'] ?? [] as $id => $definition) {
-            $this->services[$id] = $this->guessDefinition($id, $definition);
+            $this->services[$id] = $this->guessDefinition($id, $definition, $config);
         }
 
         foreach ($config['components'] ?? [] as $id => $definition) {
-            $this->components[$id] = $this->guessDefinition($id, $definition);
+            $this->components[$id] = $this->guessDefinition($id, $definition, $config);
         }
     }
 
@@ -99,13 +98,12 @@ final class ServiceMap {
 
     /**
      * @param Yii2Definition $definition
-     * @throws RuntimeException|ReflectionException
+     * @param YII2ContainerConfig $config
+     *
+     * @throws \RuntimeException
+     * @throws \ReflectionException
      */
-    private function guessDefinition(string $id, $definition): string {
-        if (is_string($definition) && (class_exists($definition) || interface_exists($definition))) {
-            return $definition;
-        }
-
+    private function guessDefinition(string $id, $definition, $config): string {
         if ($definition instanceof Closure) {
             $returnType = (new ReflectionFunction($definition))->getReturnType();
             if ($returnType instanceof ReflectionNamedType) {
@@ -134,6 +132,20 @@ final class ServiceMap {
 
             if (isset(self::CORE_COMPONENTS[$id])) {
                 return self::CORE_COMPONENTS[$id];
+            }
+        }
+
+        if (is_string($definition)) {
+            if (isset($config['container']['definitions'][$definition])) {
+                return $this->guessDefinition($definition, $config['container']['definitions'][$definition], $config);
+            }
+
+            if (isset($config['container']['singletons'][$definition])) {
+                return $this->guessDefinition($definition, $config['container']['singletons'][$definition], $config);
+            }
+
+            if (class_exists($definition) || interface_exists($definition)) {
+                return $definition;
             }
         }
 

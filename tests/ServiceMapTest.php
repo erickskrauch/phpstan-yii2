@@ -39,6 +39,7 @@ final class ServiceMapTest extends TestCase {
         $this->assertSame(CacheInterface::class, $serviceMap->getComponentClassById('componentToContainer'));
         $this->assertSame(Request::class, $serviceMap->getComponentClassById('request'));
         $this->assertSame(Response::class, $serviceMap->getComponentClassById('response'));
+        $this->assertSame(\yii\caching\ArrayCache::class, $serviceMap->getComponentClassById('cache'));
     }
 
     public function testThrowExceptionWhenConfigurationFileDoesNotExist(): void {
