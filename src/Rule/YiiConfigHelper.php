@@ -37,7 +37,7 @@ final class YiiConfigHelper {
         foreach (['__class', 'class'] as $classKey) {
             $classType = $config->getOffsetValueType(new ConstantStringType($classKey));
             // This condition will also filter our invalid type, which should be already reported by PHPStan itself
-            if (!$classType->isClassStringType()->yes()) {
+            if (!$classType->isClassString()->yes()) {
                 continue;
             }
 
@@ -141,7 +141,7 @@ final class YiiConfigHelper {
             }
 
             $target = $property->getWritableType();
-            $result = $this->ruleLevelHelper->acceptsWithReason($target, $value, $scope->isDeclareStrictTypes());
+            $result = $this->ruleLevelHelper->accepts($target, $value, $scope->isDeclareStrictTypes());
             if (!$result->result) {
                 $level = VerbosityLevel::getRecommendedLevelByType($target, $value);
                 $errors[] = RuleErrorBuilder::message(sprintf(
@@ -190,7 +190,7 @@ final class YiiConfigHelper {
             $foundParams = [];
             /** @var \PHPStan\Reflection\ClassReflection $classReflection */
             foreach ($object->getObjectClassReflections() as $classReflection) {
-                $constructorParams = ParametersAcceptorSelector::selectSingle($classReflection->getConstructor()->getVariants())->getParameters();
+                $constructorParams = ParametersAcceptorSelector::combineAcceptors($classReflection->getConstructor()->getVariants())->getParameters();
                 $param = null;
                 $paramIndex = 0;
 
@@ -244,7 +244,7 @@ final class YiiConfigHelper {
             $accepted = false;
             foreach ($foundParams as [$className, $constructorParam, $strToReport]) {
                 $paramType = $constructorParam->getType();
-                $result = $this->ruleLevelHelper->acceptsWithReason($paramType, $paramValue, $scope->isDeclareStrictTypes());
+                $result = $this->ruleLevelHelper->accepts($paramType, $paramValue, $scope->isDeclareStrictTypes());
                 if (!$result->result) {
                     $level = VerbosityLevel::getRecommendedLevelByType($paramType, $paramValue);
                     $typeCheckErrors[] = RuleErrorBuilder::message(sprintf(

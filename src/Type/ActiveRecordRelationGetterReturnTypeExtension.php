@@ -32,7 +32,7 @@ final class ActiveRecordRelationGetterReturnTypeExtension implements DynamicMeth
             return false;
         }
 
-        $returnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
+        $returnType = ParametersAcceptorSelector::combineAcceptors($methodReflection->getVariants())->getReturnType();
         if (!$returnType->isObject()->yes()) {
             return false;
         }
@@ -47,7 +47,7 @@ final class ActiveRecordRelationGetterReturnTypeExtension implements DynamicMeth
     }
 
     public function getTypeFromMethodCall(MethodReflection $methodReflection, MethodCall $methodCall, Scope $scope): Type {
-        $returnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
+        $returnType = ParametersAcceptorSelector::combineAcceptors($methodReflection->getVariants())->getReturnType();
         if ($returnType instanceof ActiveQueryObjectType) {
             return $returnType;
         }

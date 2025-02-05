@@ -12,7 +12,7 @@
     "require": {
         "php": "^7.4 || ^8.0",
         "nikic/php-parser": "^4 || ^5",
-        "phpstan/phpstan": "^1.10",
+        "phpstan/phpstan": "^2",
         "yiisoft/yii2": "~2.0.36"
     },
     "require-dev": {
@@ -20,8 +20,7 @@
         "ergebnis/composer-normalize": "^2.28",
         "friendsofphp/php-cs-fixer": "^3.13",
         "phpstan/extension-installer": "^1.1",
-        "phpstan/phpstan": "1.11.x-dev",
-        "phpstan/phpstan-phpunit": "^1",
+        "phpstan/phpstan-phpunit": "^2",
         "phpunit/phpunit": "^9"
     },
     "repositories": [
@@ -45,9 +44,9 @@
     },
     "config": {
         "allow-plugins": {
-            "yiisoft/yii2-composer": true,
+            "ergebnis/composer-normalize": true,
             "phpstan/extension-installer": true,
-            "ergebnis/composer-normalize": true
+            "yiisoft/yii2-composer": true
         },
         "sort-packages": true
     },

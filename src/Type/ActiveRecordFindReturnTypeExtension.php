@@ -61,7 +61,7 @@ final class ActiveRecordFindReturnTypeExtension implements DynamicStaticMethodRe
         $types = [];
         if ($calledOn instanceof Variable) {
             foreach ($scope->getType($calledOn)->getConstantStrings() as $constantString) {
-                if (!$constantString->isClassStringType()->yes()) {
+                if (!$constantString->isClassString()->yes()) {
                     return new NeverType();
                 }
 
@@ -76,7 +76,7 @@ final class ActiveRecordFindReturnTypeExtension implements DynamicStaticMethodRe
 
     private function createType(string $modelClass, string $methodName, Scope $scope): Type {
         $method = $this->reflectionProvider->getClass($modelClass)->getMethod($methodName, $scope);
-        $returnType = ParametersAcceptorSelector::selectSingle($method->getVariants())->getReturnType();
+        $returnType = ParametersAcceptorSelector::combineAcceptors($method->getVariants())->getReturnType();
         if (!$returnType->isObject()->yes()) {
             throw new ShouldNotHappenException();
         }

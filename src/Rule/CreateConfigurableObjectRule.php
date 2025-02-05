@@ -52,7 +52,7 @@ final class CreateConfigurableObjectRule implements Rule {
             return [];
         }
 
-        $constructorParams = ParametersAcceptorSelector::selectSingle($class->getConstructor()->getVariants())->getParameters();
+        $constructorParams = ParametersAcceptorSelector::combineAcceptors($class->getConstructor()->getVariants())->getParameters();
         $lastArgName = $constructorParams[array_key_last($constructorParams)]->getName();
 
         $args = $node->args;

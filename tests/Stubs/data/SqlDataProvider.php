@@ -12,7 +12,13 @@ final class SqlDataProvider {
         /** @phpstan-var \yii\data\SqlDataProvider<string, array{id: string}> $provider */
         $provider = new \yii\data\SqlDataProvider();
         $provider->sql = 'SELECT * FROM comments';
-        $provider->key = fn(array $row) => $row['id'];
+        $provider->key = function(array $row): string {
+            if (!array_key_exists('id', $row) || !is_string($row['id'])) {
+                throw new \InvalidArgumentException('Invalid row data');
+            }
+
+            return $row['id'];
+        };
 
         return $provider;
     }
