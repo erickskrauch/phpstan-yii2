@@ -17,3 +17,6 @@ parameters:
   ignoreErrors:
     - '#Calling PHPStan\\Reflection\\Annotations\\AnnotationsPropertiesClassReflectionExtension\:\:(has|get)Property\(\) is not covered.+#'
     - '#Creating new PHPStan\\Reflection\\Dummy\\DummyPropertyReflection is not covered.+#'
+    # PHPStan 2.1.13 introduced a constructor with the $name parameter
+    - message: '#Class PHPStan\\Reflection\\Dummy\\DummyPropertyReflection does not have a constructor and must be instantiated without any parameters\.#'
+      reportUnmatched: false
